@@ -1,29 +1,25 @@
 """
 Monte Carlo path model: probability that Dale reaches £750k invested by end-2034 (age 40)
-under each route, given his constraints (floor never touched, PG ≤ risk pot, energy limits).
+under each route, given his constraints (floor never touched, PG exposure ≤ risk pot, energy limits).
 
-All parameters live in params.json with a `src` key naming the research note / URL that
-justifies them. Nothing in this file is a number; it is only mechanics.
+All numbers live in params.json (each leaf: value/low/high/src/confidence). This file is mechanics only.
 
-Routes modelled
-  A  contract_only      : one ~3-month pre-sales block per year, surplus to index
-  B1 buy_distributor    : buy an importer/distributor with a manager, Dale sells
-  B2 buy_services       : buy a contracted B2B services firm (cleaning/compliance/etc.)
-  B3 buy_hire           : buy a plant/tool/equipment hire firm
-  B4 buy_logistics      : buy a courier/3PL/pallet business
-  B5 buy_ecommerce      : buy an existing multi-channel ecommerce brand
-  B6 buy_saas           : buy a small SaaS with paying customers
-  B7 buy_agency         : control group - agency / MSP
-  C1 build_ecommerce    : start multi-channel ecommerce from zero
-  C2 build_services     : start a B2B services business from zero
-  D  hybrid_plan        : SOT plan - one block Feb-Apr 2027, then B1-style buy by Sep 2027
+Routes (kind):
+  contract_only   (contract)  one ~13-week pre-sales block per year (the SOT one-block rule), surplus to index
+  contract_heavy  (contract)  three blocks per year (~150 billed days) - the "labour" comparator, health cost flagged
+  buy_*           (buy)       search from 2027, buy with vendor note + bank/GGS debt, manager in place, Dale sells
+  build_*         (build)     start from zero (ecommerce / B2B services / AWS-AI consultancy)
+  build_ai_app    (venture)   AI app or vertical SaaS with a second person; stage-gated, heavy-tailed exit
+  hybrid_plan     (hybrid)    SOT plan: one block Feb-Apr 2027, then buy a distributor-type business
+  hybrid_plan_app (hybrid)    hybrid_plan plus the "product from inside owned customers" option (app_option)
 
-Each route is simulated year by year 2026 -> 2034 (9 steps, t=0 is end-Sep 2026).
-State: liquid_investable (index + cash), business_equity (0 if none), debt_outstanding,
-floor_breached flag, hours/week profile, face-to-face share.
+Timeline: t=0 is calendar 2027 ... t=7 is 2034. Start state is end-2026.
+Backstop (all non-contract routes): if year-end liquid falls below floor + buffer, Dale does one SC contracting
+block that year if one lands (the SOT's "26 days covers a year's burn" backstop). This is what keeps a failure
+a bad year rather than a restart, and it is counted in hours.
 """
 from __future__ import annotations
-import json, math, sys, os
+import json, os, copy
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -34,383 +30,416 @@ def load_params(path=os.path.join(HERE, "params.json")):
         return json.load(f)
 
 
-def v(p, key):
-    """Return the value of a parameter (params are {value, src} dicts)."""
-    node = p
+def v(node, key):
     for k in key.split("."):
         node = node[k]
     return node["value"] if isinstance(node, dict) and "value" in node else node
 
 
-def lognormal_from_median_and_p90(rng, median, p90, size):
-    """Lognormal draws parameterised by median and 90th percentile."""
-    mu = math.log(median)
-    sigma = (math.log(p90) - mu) / 1.2816
-    return rng.lognormal(mu, sigma, size)
+def set_override(p, dotted, val):
+    node = p
+    parts = dotted.split(".")
+    for part in parts[:-1]:
+        node = node[part]
+    leaf = node[parts[-1]]
+    if isinstance(leaf, dict) and "value" in leaf:
+        leaf["value"] = val
+    else:
+        node[parts[-1]] = val
 
 
-def simulate(route: str, p: dict, n: int = 20000, seed: int = 42, overrides: dict | None = None):
-    rng = np.random.default_rng(seed)
-    years = v(p, "horizon.years")  # 8: end-2026 .. end-2034
-    g = p["general"]
+def lognormal(rng, median, p90, size):
+    mu = np.log(np.maximum(median, 1e-9))
+    sigma = np.maximum((np.log(np.maximum(p90, 2e-9)) - mu) / 1.2816, 0.02)
+    return np.exp(rng.normal(mu, sigma, size))
+
+
+def annuity(principal, rate, term):
+    if term <= 0:
+        return principal
+    if rate <= 0:
+        return principal / term
+    return principal * rate / (1 - (1 + rate) ** -term)
+
+
+def simulate(route, p, n=20000, seed=42, overrides=None):
+    p = copy.deepcopy(p)
     if overrides:
-        # shallow override of general or route values, e.g. {"general.index_real_return_mean": 0.05}
         for k, val in overrides.items():
-            node = p
-            parts = k.split(".")
-            for part in parts[:-1]:
-                node = node[part]
-            if isinstance(node[parts[-1]], dict) and "value" in node[parts[-1]]:
-                node[parts[-1]]["value"] = val
-            else:
-                node[parts[-1]] = val
+            set_override(p, k, val)
+    rng = np.random.default_rng(seed)
+    years = int(v(p, "horizon.years"))
+    g = p["general"]
+    r = p["routes"][route]
+    kind = v(r, "kind")
 
-    start_liquid = v(g, "start_investable")           # ~£150-170k after incoming
-    floor = v(g, "floor")                              # £120k never touched
-    burn = v(g, "annual_burn")                         # £20k conservative
-    mean_r = v(g, "index_nominal_return_mean")
-    sd_r = v(g, "index_return_sd")
-    target = v(g, "target")                            # £750k
+    floor = v(g, "floor")
+    burn = v(g, "annual_burn")
+    mean_r, sd_r = v(g, "index_nominal_return_mean"), v(g, "index_return_sd")
+    target = v(g, "target")
+    draw_tax = v(g, "effective_tax_on_draw")
+    exit_tax = v(g, "effective_tax_on_exit")
+    tax_sole = v(g, "effective_tax_on_contract_sole")
+    tax_stacked = v(g, "effective_tax_on_contract_stacked")
+    bs_on = bool(v(g, "backstop_enabled")) and kind != "contract"
+    bs_buffer = v(g, "backstop_trigger_buffer")
+    bs_gross_med, bs_gross_p90, bs_p = v(g, "backstop_block_gross_median"), v(g, "backstop_block_gross_p90"), v(g, "backstop_p_block_lands")
+    bs_hours = v(g, "backstop_hours_week_equiv")
+    pg_share = v(g, "pg_share_of_facility")
+    max_debt_x = v(g, "senior_debt_max_ebitda_multiple")
 
-    # arrays
-    liquid = np.full(n, start_liquid, dtype=float)
+    # ---------------- state ----------------
+    liquid = np.full(n, float(v(g, "start_investable")))
     biz_equity = np.zeros(n)
     debt = np.zeros(n)
+    bank_service = np.zeros(n)
+    vendor_service = np.zeros(n)
+    bank_years_left = np.zeros(n)
+    vendor_years_left = np.zeros(n)
+    ebitda = np.zeros(n)
     alive_biz = np.zeros(n, dtype=bool)
+    acquired_year = np.full(n, 99)
+    searching = np.zeros(n, dtype=bool)
+    search_years = np.zeros(n)
+    entry_mult = np.zeros(n)
+    sold = np.zeros(n, dtype=bool)
+    failed = np.zeros(n, dtype=bool)
     floor_breached = np.zeros(n, dtype=bool)
-    reached_year = np.full(n, 99, dtype=int)
+    reached_year = np.full(n, 99)
+    owner_draw_hist = np.zeros((n, years))
     hours = np.zeros((n, years))
     f2f = np.zeros((n, years))
-    ebitda = np.zeros(n)
-    owner_draw = np.zeros(n)
-    acquired_year = np.full(n, 99, dtype=int)
-    sold = np.zeros(n, dtype=bool)
-    deal_failed = np.zeros(n, dtype=bool)
-
-    r = p["routes"][route]
-    kind = v(r, "kind")  # contract | buy | build | hybrid
-
-    # --- per-route parameters --------------------------------------------------------------
-    if kind in ("buy", "hybrid"):
-        p_close_per_year = v(r, "p_close_within_12m")          # P(complete a deal in a given search year)
-        ev_median, ev_p90 = v(r, "ev_median"), v(r, "ev_p90")
-        mult_median, mult_p90 = v(r, "multiple_median"), v(r, "multiple_p90")
-        seller_fin = v(r, "seller_finance_share")                # share of EV as vendor loan
-        bank_rate = v(r, "bank_rate")                            # all-in on bank/GGS debt
-        bank_term = v(r, "bank_term_years")
-        vl_rate = v(r, "vendor_loan_rate")
-        vl_term = v(r, "vendor_loan_term_years")
-        deal_costs = v(r, "deal_costs")
-        wc_reserve_pct = v(r, "wc_reserve_pct")
-        mgr_cost = v(r, "manager_cost")                          # £ if a manager must be hired/retained
-        p_mgr_stays = v(r, "p_manager_stays")
-        yr1_ebitda_mult_median = v(r, "yr1_ebitda_change_median")  # e.g. 0.95
-        yr1_ebitda_mult_p90 = v(r, "yr1_ebitda_change_p90")
-        p_severe_yr1 = v(r, "p_severe_decline_yr1")              # >40% EBITDA drop (seller-dependency etc.)
-        severe_mult = v(r, "severe_decline_factor")
-        p_fail_annual = v(r, "p_failure_annual_after_yr1")        # business ceases / equity ~0
-        growth_median = v(r, "ebitda_growth_median")
-        growth_sd = v(r, "ebitda_growth_sd")
-        exit_mult_median = v(r, "exit_multiple_median")
-        exit_mult_p90 = v(r, "exit_multiple_p90")
-        exit_year_earliest = v(r, "exit_earliest_years_held")
-        p_sell_when_eligible = v(r, "p_sell_per_year_when_eligible")
-        hrs_yr1, hrs_later = v(r, "hours_yr1"), v(r, "hours_yr3")
-        f2f_share = v(r, "f2f_share")
-        fit = v(r, "fit_multiplier")                             # personality/health fit applied to success probs
-        draw_tax = v(g, "effective_tax_on_draw")
-        max_bank_debt = v(g, "risk_pot_after_block") if kind == "hybrid" else v(g, "risk_pot_now")
-    if kind in ("contract", "hybrid"):
-        block_gross_median, block_gross_p90 = v(r, "block_gross_median"), v(r, "block_gross_p90")
-        p_block_lands = v(r, "p_block_lands")
-        blocks_per_year = v(r, "blocks_per_year")
-        contract_tax = v(g, "effective_tax_on_contract")
-        health_cost_per_block = v(r, "health_recovery_weeks_per_block")
-    if kind == "build":
-        capital_in = v(r, "capital_in")
-        p_survive = v(r, "survival_curve")                       # list P(alive at end of year k | alive k-1)
-        profit_median_by_year = v(r, "owner_profit_median_by_year")  # list
-        profit_p90_by_year = v(r, "owner_profit_p90_by_year")
-        p_reach_70k_ever = v(r, "p_reach_70k_by_yr3")
-        resale_mult_median = v(r, "resale_multiple_median")
-        hrs_yr1, hrs_later = v(r, "hours_yr1"), v(r, "hours_yr3")
-        f2f_share = v(r, "f2f_share")
-        fit = v(r, "fit_multiplier")
-        draw_tax = v(g, "effective_tax_on_draw")
-
-    if kind == "venture":
-        v_capital_yr = v(r, "capital_per_year")              # cash burn on the build (second person, infra) yrs 0-1
-        v_p_advance = v(r, "p_advance_stage")                # list: P(move from stage k to k+1) per year
-        v_p_kill = v(r, "p_kill_per_year")                   # list by stage: P(shut down) per year
-        v_profit_by_stage = v(r, "owner_profit_by_stage")    # list: median owner profit at each stage
-        v_profit_p90_by_stage = v(r, "owner_profit_p90_by_stage")
-        v_p_exit = v(r, "p_exit_per_year_by_stage")          # list by stage
-        v_exit_median = v(r, "exit_value_median_by_stage")   # list
-        v_exit_p90 = v(r, "exit_value_p90_by_stage")
-        hrs_yr1, hrs_later = v(r, "hours_yr1"), v(r, "hours_yr3")
-        f2f_share = v(r, "f2f_share")
-        fit = v(r, "fit_multiplier")
-        draw_tax = v(g, "effective_tax_on_draw")
-        venture_alive[:] = True
-        app_started[:] = True
-        acquired_year[:] = 0
-    app_overlay = r.get("app_option") if kind == "hybrid" else None
-    searching = np.ones(n, dtype=bool) if kind in ("buy", "hybrid") else np.zeros(n, dtype=bool)
-    search_years = np.zeros(n, dtype=int)
-    max_search_years = v(r, "max_search_years") if kind in ("buy", "hybrid") else 0
-    build_started = np.zeros(n, dtype=bool)
-    if kind == "build":
-        build_started[:] = True
-        liquid -= capital_in
-        alive_biz[:] = True
-        acquired_year[:] = 0
-    years_held = np.zeros(n, dtype=int)
-    debt_service_all = np.zeros(n)
-    debt_years_left = np.zeros(n)
-    # venture (AI app) state
-    stage = np.zeros(n, dtype=int)        # 0 building, 1 first revenue, 2 traction, 3 scaled
+    backstop_used = np.zeros((n, years), dtype=bool)
+    blocks_done = np.zeros(n)
+    nw_path = np.zeros((n, years))
+    stage = np.zeros(n, dtype=int)
+    ev_closed = np.zeros(n)
+    ebitda_closed = np.zeros(n)
+    cash_in_deal = np.zeros(n)
     venture_alive = np.zeros(n, dtype=bool)
     app_started = np.zeros(n, dtype=bool)
 
-    for t in range(years):
-        year = 2027 + t  # the calendar year being simulated (t=0 -> 2027)
-        # 1. market return on liquid (floor + surplus) ----------------------------------
-        ret = rng.normal(mean_r, sd_r, n)
-        liquid *= (1 + ret)
-        liquid -= burn  # living costs, always paid from cash flow first (see below adjustments)
+    # ---------------- route params ----------------
+    if kind in ("buy", "hybrid"):
+        p_close = v(r, "p_close_within_12m") * v(r, "fit_multiplier")
+        max_search = v(r, "max_search_years")
+        fit = v(r, "fit_multiplier")
+        mgr_cost = v(r, "manager_cost")
+        search_start = int(v(r, "contract_years_before_search")) if "contract_years_before_search" in r else 0
+        blocks_pre = int(v(r, "blocks_per_year")) if "blocks_per_year" in r else 0
+        blocks_search = int(v(r, "blocks_during_search")) if "blocks_during_search" in r else 0
+        blocks_fallback = int(v(g, "blocks_fallback_per_year"))
+        p_land = v(r, "p_block_lands") if "p_block_lands" in r else v(g, "backstop_p_block_lands")
+        c_tax_one = tax_sole
+        c_tax_multi = v(r, "effective_tax_on_contract") if "effective_tax_on_contract" in r else v(g, "effective_tax_on_contract_multi")
+        bank_debt = np.zeros(n)
+        searching[:] = True
+    if kind == "contract":
+        blocks = int(v(r, "blocks_per_year"))
+        p_land = v(r, "p_block_lands")
+        c_tax = v(r, "effective_tax_on_contract") if "effective_tax_on_contract" in r else tax_sole
+    if kind == "build":
+        fit = v(r, "fit_multiplier")
+        liquid -= v(r, "capital_in")
+        alive_biz[:] = True
+        acquired_year[:] = 0
+        surv = v(r, "survival_curve")
+        pm_by, p9_by = v(r, "owner_profit_median_by_year"), v(r, "owner_profit_p90_by_year")
+    if kind == "venture":
+        fit = v(r, "fit_multiplier")
+        venture_alive[:] = True
+        acquired_year[:] = 0
+    app = r.get("app_option") if kind == "hybrid" else None
 
+    for t in range(years):
+        year = 2027 + t
+        liquid *= (1 + rng.normal(mean_r, sd_r, n))
+        liquid -= burn
         h = np.zeros(n)
         ff = np.zeros(n)
+        income_this_year = np.zeros(n, dtype=bool)
 
-        # 2. contracting income ---------------------------------------------------------
-        if kind == "contract" or (kind == "hybrid" and t == 0):
-            nblocks = blocks_per_year if kind == "contract" else 1
-            for _ in range(int(nblocks)):
-                lands = rng.random(n) < p_block_lands
-                gross = lognormal_from_median_and_p90(rng, block_gross_median, block_gross_p90, n)
-                liquid += np.where(lands, gross * (1 - contract_tax), 0.0)
-                h += np.where(lands, v(r, "hours_per_block_week") * (13 / 52), 0.0)
-        # contract-only route: no f2f, hours as above
-
-        # 3. acquisition search & completion ------------------------------------------
+        # ---- contracting blocks (planned) ----
+        if kind == "contract":
+            for _ in range(blocks):
+                lands = rng.random(n) < p_land
+                gross = lognormal(rng, v(r, "block_gross_median"), v(r, "block_gross_p90"), n)
+                liquid += np.where(lands, gross * (1 - c_tax), 0.0)
+                h += np.where(lands, v(r, "hours_per_block_week") * 13 / 52, 0.0)
+                blocks_done += lands
+                income_this_year |= lands
         if kind in ("buy", "hybrid"):
-            can_search = searching & (search_years < max_search_years)
-            # hybrid: search starts 2027 too (SOT: offer Feb-Apr 2027, completion by Sep 2027)
-            close = can_search & (rng.random(n) < p_close_per_year * fit)
-            search_years += can_search.astype(int)
-            h += np.where(can_search, v(r, "search_hours_week"), 0.0)
-            ff += np.where(can_search, 0.5, 0.0)
+            # planned blocks: blocks_pre per year before the search opens, blocks_search per year while searching
+            idle = (~searching | (search_years >= max_search)) & ~alive_biz & (t >= search_start)
+            nb = np.where(t < search_start, blocks_pre, np.where(searching & (search_years < max_search) & (acquired_year == 99), blocks_search, np.where(idle, blocks_fallback, 0)))
+            for b in range(int(nb.max()) if nb.size else 0):
+                do = nb > b
+                lands = do & (rng.random(n) < p_land)
+                gross = lognormal(rng, v(g, "backstop_block_gross_median"), v(g, "backstop_block_gross_p90"), n)
+                tax = c_tax_one if b == 0 else c_tax_multi
+                liquid += np.where(lands, gross * (1 - tax), 0.0)
+                h += np.where(lands, v(g, "backstop_hours_week_equiv"), 0.0)
+                blocks_done += lands
+                income_this_year |= lands
+
+        # ---- search & completion ----
+        if kind in ("buy", "hybrid"):
+            can = searching & (search_years < max_search) & (t >= search_start)
+            close = can & (rng.random(n) < p_close)
+            search_years += can
+            h += np.where(can, v(r, "search_hours_week"), 0.0)
+            ff += np.where(can, 0.5, 0.0)
             idx = np.where(close)[0]
             if idx.size:
-                ev = lognormal_from_median_and_p90(rng, ev_median, ev_p90, idx.size)
-                mult = lognormal_from_median_and_p90(rng, mult_median, mult_p90, idx.size)
-                e0 = ev / mult                                   # EBITDA bought
-                vendor = ev * seller_fin
-                cash_needed = ev * (1 - seller_fin)
-                # bank debt capped by risk pot; rest from cash; if cash short, deal shrinks (buy smaller)
-                bank = np.minimum(cash_needed * v(r, "bank_share_of_cash_gap"), max_bank_debt)
-                equity_cash = cash_needed - bank + deal_costs + ev * wc_reserve_pct
-                available = liquid[idx] - floor
-                scale = np.clip(available / np.maximum(equity_cash, 1), 0, 1)
-                # scale the deal down if cash is short (min viable deal at 0.6 of drawn EV, else no deal)
+                m = idx.size
+                ev = lognormal(rng, v(r, "ev_median"), v(r, "ev_p90"), m)
+                mult = lognormal(rng, v(r, "multiple_median"), v(r, "multiple_p90"), m)
+                e0 = ev / mult
+                vendor = ev * v(r, "seller_finance_share")
+                gap = ev - vendor
+                avail = np.maximum(liquid[idx] - floor, 0.0)          # the risk pot = cash above the floor at completion
+                bank = np.minimum.reduce([gap * v(r, "bank_share_of_cash_gap"), avail / pg_share, e0 * max_debt_x])
+                # lender DSCR gate: (EBITDA - manager) / (bank + vendor service) >= dscr_min -> shrink bank debt to fit
+                vs = annuity(vendor, v(r, "vendor_loan_rate"), v(r, "vendor_loan_term_years"))
+                bank_af = annuity(1.0, v(r, "bank_rate"), v(r, "bank_term_years"))
+                bank_cap = np.maximum(((e0 - mgr_cost) / v(g, "dscr_min") - vs) / bank_af, 0.0)
+                bank = np.minimum(bank, bank_cap)
+                equity_cash = gap - bank + v(r, "deal_costs") + ev * v(r, "wc_reserve_pct")
+                scale = np.clip(avail / np.maximum(equity_cash, 1.0), 0.0, 1.0)
                 ok = scale >= v(r, "min_deal_scale")
-                scale = np.where(ok, np.minimum(scale, 1.0), 0.0)
+                scale = np.where(ok, scale, 0.0)
                 ev, e0, vendor, bank, equity_cash = ev * scale, e0 * scale, vendor * scale, bank * scale, equity_cash * scale
-                liquid[idx] -= np.where(ok, equity_cash, 0.0)
-                debt[idx] = np.where(ok, vendor + bank, 0.0)
-                ebitda[idx] = np.where(ok, e0, 0.0)
-                biz_equity[idx] = np.where(ok, ev, 0.0)  # book at EV; marked to market on exit
+                liquid[idx] -= equity_cash
+                ev_closed[idx] = ev
+                ebitda_closed[idx] = e0
+                cash_in_deal[idx] = equity_cash
+                debt[idx] = vendor + bank
+                bank_debt[idx] = bank
+                ebitda[idx] = e0
+                entry_mult[idx] = mult
                 alive_biz[idx] = ok
                 acquired_year[idx] = np.where(ok, t, 99)
                 searching[idx] = ~ok
-                # manager retention risk crystallises at completion
-                mgr_leaves = rng.random(idx.size) > p_mgr_stays
-                # year-1 EBITDA change
-                chg = lognormal_from_median_and_p90(rng, yr1_ebitda_mult_median, yr1_ebitda_mult_p90, idx.size)
-                severe = rng.random(idx.size) < (p_severe_yr1 / fit)
-                chg = np.where(severe, severe_mult, chg)
+                # year-1 shock: manager leaves, seller-dependency, severe decline
+                chg = lognormal(rng, v(r, "yr1_ebitda_change_median"), v(r, "yr1_ebitda_change_p90"), m)
+                severe = rng.random(m) < v(r, "p_severe_decline_yr1") / fit
+                chg = np.where(severe, v(r, "severe_decline_factor"), chg)
+                mgr_leaves = rng.random(m) > v(r, "p_manager_stays")
                 chg = np.where(mgr_leaves, chg * v(r, "manager_leaves_factor"), chg)
                 ebitda[idx] *= chg
-                # store annual debt service
-                ann_bank = np.where(bank > 0, bank * bank_rate / (1 - (1 + bank_rate) ** -bank_term), 0.0)
-                ann_vl = np.where(vendor > 0, vendor * vl_rate / (1 - (1 + vl_rate) ** -vl_term), 0.0) if vl_rate > 0 else vendor / vl_term
-                debt_service = ann_bank + ann_vl
-                debt_service_all[idx] = np.where(ok, debt_service, 0.0)
-                debt_years_left[idx] = np.where(ok, max(bank_term, vl_term), 0)
+                bank_service[idx] = np.where(ok, annuity(bank, v(r, "bank_rate"), v(r, "bank_term_years")), 0.0)
+                vendor_service[idx] = np.where(ok, annuity(vendor, v(r, "vendor_loan_rate"), v(r, "vendor_loan_term_years")), 0.0)
+                bank_years_left[idx] = np.where(ok, v(r, "bank_term_years"), 0)
+                vendor_years_left[idx] = np.where(ok, v(r, "vendor_loan_term_years"), 0)
 
-        # 4. business operation -------------------------------------------------------
+        # ---- operating an acquired business ----
         if kind in ("buy", "hybrid"):
             op = alive_biz & (acquired_year <= t)
-            if op.any():
-                held = t - acquired_year
-                # years after the first: growth + failure hazard
-                later = op & (held >= 1)
-                gr = rng.normal(growth_median, growth_sd, n)
-                ebitda = np.where(later, ebitda * (1 + gr), ebitda)
-                fail = later & (rng.random(n) < p_fail_annual / fit)
-                # failure: equity gone, bank debt still owed up to PG (risk pot), vendor loan dies with the business
-                bank_pg_loss = np.minimum(debt, max_bank_debt) * v(r, "pg_loss_share_on_failure")
-                liquid = np.where(fail, liquid - bank_pg_loss, liquid)
-                alive_biz = np.where(fail, False, alive_biz)
-                biz_equity = np.where(fail, 0.0, biz_equity)
-                ebitda = np.where(fail, 0.0, ebitda)
-                debt = np.where(fail, 0.0, debt)
-                deal_failed |= fail
-                op = alive_biz & (acquired_year <= t)
-                # owner draw = EBITDA - manager cost (if manager needed) - debt service
-                ds = np.where(debt_years_left > 0, debt_service_all, 0.0)
-                draw_pre = ebitda - mgr_cost - ds
-                draw = np.where(op, draw_pre, 0.0)
-                # if draw negative, it is a cash call on the risk pot (never the floor -> floor_breached if needed)
-                net_draw = np.where(draw > 0, draw * (1 - draw_tax), draw)
-                liquid = np.where(op, liquid + net_draw, liquid)
-                owner_draw = np.where(op, draw, owner_draw)
-                debt = np.where(op & (debt_years_left > 0), np.maximum(debt - (ds - debt * v(r, "blended_debt_rate")), 0), debt)
-                debt_years_left = np.where(op, np.maximum(debt_years_left - 1, 0), debt_years_left)
-                h += np.where(op, np.where(held == 0, hrs_yr1, hrs_later), 0.0)
-                ff += np.where(op, f2f_share, 0.0)
-                # business equity marked at current EBITDA x entry multiple (conservative) less debt
-                biz_equity = np.where(op, np.maximum(ebitda * mult_median - debt, 0.0), biz_equity)
-                # exit option
-                eligible = op & (held >= exit_year_earliest) & ~sold
-                sell = eligible & (rng.random(n) < p_sell_when_eligible)
-                if sell.any():
-                    xm = lognormal_from_median_and_p90(rng, exit_mult_median, exit_mult_p90, n)
-                    proceeds = np.maximum(ebitda * xm - debt, 0.0)
-                    net = proceeds * (1 - v(g, "effective_tax_on_exit"))
-                    liquid = np.where(sell, liquid + net, liquid)
-                    biz_equity = np.where(sell, 0.0, biz_equity)
-                    debt = np.where(sell, 0.0, debt)
-                    alive_biz = np.where(sell, False, alive_biz)
-                    sold |= sell
-                    # after a sale the SOT says the odd contract is allowed; ignore (conservative)
-
-        if kind == "build":
-            op = alive_biz
-            held = t
-            surv = p_survive[min(held, len(p_survive) - 1)] * (fit if held == 0 else 1.0)
-            die = op & (rng.random(n) > surv)
-            alive_biz = np.where(die, False, alive_biz)
-            deal_failed |= die
-            op = alive_biz
-            pm = profit_median_by_year[min(held, len(profit_median_by_year) - 1)]
-            p9 = profit_p90_by_year[min(held, len(profit_p90_by_year) - 1)]
-            prof = lognormal_from_median_and_p90(rng, max(pm, 1.0), max(p9, 2.0), n) if pm > 0 else np.zeros(n)
-            # a share of builds never reach meaningful profit: cap using p_reach_70k
-            prof = np.where(op, prof, 0.0)
-            liquid = np.where(op, liquid + prof * (1 - draw_tax), liquid)
-            owner_draw = np.where(op, prof, owner_draw)
-            biz_equity = np.where(op, prof * resale_mult_median, 0.0)
-            h += np.where(op, np.where(held == 0, hrs_yr1, hrs_later), 0.0)
-            ff += np.where(op, f2f_share, 0.0)
-            # exit after year 3 if profitable
-            eligible = op & (held >= 3) & ~sold & (prof > 30000)
+            held = t - acquired_year
+            later = op & (held >= 1)
+            ebitda = np.where(later, ebitda * (1 + rng.normal(v(r, "ebitda_growth_median"), v(r, "ebitda_growth_sd"), n)), ebitda)
+            fail = later & (rng.random(n) < v(r, "p_failure_annual_after_yr1") / fit)
+            pg_loss = bank_debt * (debt / np.maximum(debt + 1e-9, 1e-9)) * pg_share * v(r, "pg_loss_share_on_failure")  # PG called on remaining bank debt
+            liquid = np.where(fail, liquid - pg_loss, liquid)
+            alive_biz &= ~fail
+            failed |= fail
+            ebitda = np.where(fail, 0.0, ebitda)
+            debt = np.where(fail, 0.0, debt)
+            bank_debt = np.where(fail, 0.0, bank_debt)
+            op = alive_biz & (acquired_year <= t)
+            ds = np.where(bank_years_left > 0, bank_service, 0.0) + np.where(vendor_years_left > 0, vendor_service, 0.0)
+            draw = np.where(op, ebitda - mgr_cost - ds, 0.0)
+            liquid += np.where(draw > 0, draw * (1 - draw_tax), draw)   # negative draw = cash call
+            owner_draw_hist[:, t] = draw
+            income_this_year |= op & (draw > 0)
+            interest = debt * v(r, "blended_debt_rate")
+            new_debt = np.where(op & (ds > 0), np.maximum(debt - (ds - interest), 0.0), debt)
+            bank_debt = np.where(debt > 0, bank_debt * new_debt / np.maximum(debt, 1e-9), 0.0)
+            debt = new_debt
+            bank_years_left = np.where(op, np.maximum(bank_years_left - 1, 0), bank_years_left)
+            vendor_years_left = np.where(op, np.maximum(vendor_years_left - 1, 0), vendor_years_left)
+            h += np.where(op, np.where(held == 0, v(r, "hours_yr1"), v(r, "hours_yr3")), 0.0)
+            ff += np.where(op, v(r, "f2f_share"), 0.0)
+            biz_equity = np.where(op, np.maximum(ebitda * entry_mult - debt, 0.0), np.where(alive_biz, biz_equity, 0.0))
+            eligible = op & (held >= v(r, "exit_earliest_years_held")) & ~sold
             sell = eligible & (rng.random(n) < v(r, "p_sell_per_year_when_eligible"))
             if sell.any():
-                net = prof * resale_mult_median * (1 - v(g, "effective_tax_on_exit"))
+                xm = lognormal(rng, v(r, "exit_multiple_median"), v(r, "exit_multiple_p90"), n)
+                net = np.maximum(ebitda * xm - debt, 0.0) * (1 - exit_tax)
                 liquid = np.where(sell, liquid + net, liquid)
                 biz_equity = np.where(sell, 0.0, biz_equity)
-                alive_biz = np.where(sell, False, alive_biz)
+                debt = np.where(sell, 0.0, debt)
+                bank_debt = np.where(sell, 0.0, bank_debt)
+                alive_biz &= ~sell
                 sold |= sell
 
+        # ---- app option from inside owned customers (hybrid_plan_app) ----
+        if app is not None:
+            start = alive_biz & (acquired_year <= t - v(app, "years_after_completion")) & ~app_started & ((liquid - floor) > v(app, "capital"))
+            liquid = np.where(start, liquid - v(app, "capital"), liquid)
+            app_started |= start
+            stage = np.where(start, 1, stage)
+            trying = app_started & (stage == 1) & alive_biz
+            succ = trying & (rng.random(n) < v(app, "p_success_per_year"))
+            dead = trying & ~succ & (rng.random(n) < v(app, "p_kill_per_year"))
+            stage = np.where(succ, 2, np.where(dead, 9, stage))
+            paying = app_started & (stage == 2) & alive_biz
+            extra = lognormal(rng, v(app, "profit_median"), v(app, "profit_p90"), n)
+            liquid = np.where(paying, liquid + extra * (1 - draw_tax), liquid)
+            ebitda = np.where(paying, ebitda + extra * v(app, "ebitda_uplift_share"), ebitda)
+            h += np.where(app_started & (stage < 9) & alive_biz, v(app, "hours_week"), 0.0)
+
+        # ---- build from zero ----
+        if kind == "build":
+            op = alive_biz
+            s = surv[min(t, len(surv) - 1)] * (fit if t == 0 else 1.0)
+            die = op & (rng.random(n) > s)
+            alive_biz &= ~die
+            failed |= die
+            op = alive_biz
+            pm, p9 = pm_by[min(t, len(pm_by) - 1)], p9_by[min(t, len(p9_by) - 1)]
+            prof = np.where(op, lognormal(rng, pm, p9, n), 0.0)
+            liquid += prof * (1 - draw_tax)
+            owner_draw_hist[:, t] = prof
+            income_this_year |= op & (prof > burn)
+            biz_equity = np.where(op, prof * v(r, "resale_multiple_median"), 0.0)
+            h += np.where(op, np.where(t == 0, v(r, "hours_yr1"), v(r, "hours_yr3")), 0.0)
+            ff += np.where(op, v(r, "f2f_share"), 0.0)
+            eligible = op & (t >= 3) & ~sold & (prof > 30000)
+            sell = eligible & (rng.random(n) < v(r, "p_sell_per_year_when_eligible"))
+            if sell.any():
+                net = prof * v(r, "resale_multiple_median") * (1 - exit_tax)
+                liquid = np.where(sell, liquid + net, liquid)
+                biz_equity = np.where(sell, 0.0, biz_equity)
+                alive_biz &= ~sell
+                sold |= sell
+
+        # ---- venture (AI app) ----
         if kind == "venture":
             op = venture_alive
-            # spend build capital in the first two years
-            spend = v_capital_yr if t < 2 else 0.0
-            liquid = np.where(op, liquid - spend, liquid)
-            # advance / kill
-            adv_p = np.array([v_p_advance[min(s, len(v_p_advance) - 1)] for s in stage]) * fit
-            kill_p = np.array([v_p_kill[min(s, len(v_p_kill) - 1)] for s in stage]) / fit
+            liquid = np.where(op & (t < 2), liquid - v(r, "capital_per_year"), liquid)
+            pa, pk = v(r, "p_advance_stage"), v(r, "p_kill_per_year")
+            adv_p = np.array([pa[min(s, len(pa) - 1)] for s in stage]) * fit
+            kill_p = np.array([pk[min(s, len(pk) - 1)] for s in stage]) / fit
             adv = op & (rng.random(n) < adv_p) & (stage < 3)
             kill = op & ~adv & (rng.random(n) < kill_p)
             stage = np.where(adv, stage + 1, stage)
-            venture_alive = np.where(kill, False, venture_alive)
-            deal_failed |= kill
+            venture_alive &= ~kill
+            failed |= kill
             op = venture_alive
-            pm = np.array([v_profit_by_stage[min(s, len(v_profit_by_stage) - 1)] for s in stage])
-            p9 = np.array([v_profit_p90_by_stage[min(s, len(v_profit_p90_by_stage) - 1)] for s in stage])
-            prof = np.where(pm > 0, np.exp(rng.normal(np.log(np.maximum(pm, 1)), np.maximum((np.log(np.maximum(p9, 2)) - np.log(np.maximum(pm, 1))) / 1.2816, 0.05), n)), 0.0)
-            prof = np.where(op, prof, 0.0)
-            liquid = np.where(op & (prof > 0), liquid + prof * (1 - draw_tax), liquid)
-            owner_draw = np.where(op, prof, owner_draw)
-            ex_p = np.array([v_p_exit[min(s, len(v_p_exit) - 1)] for s in stage])
-            sell = op & (rng.random(n) < ex_p) & ~sold
+            pm_s, p9_s = v(r, "owner_profit_by_stage"), v(r, "owner_profit_p90_by_stage")
+            pm = np.array([pm_s[min(s, len(pm_s) - 1)] for s in stage], dtype=float)
+            p9 = np.array([p9_s[min(s, len(p9_s) - 1)] for s in stage], dtype=float)
+            prof = np.where(op & (pm > 0), lognormal(rng, np.maximum(pm, 1), np.maximum(p9, 2), n), 0.0)
+            liquid += prof * (1 - draw_tax)
+            owner_draw_hist[:, t] = prof
+            income_this_year |= op & (prof > burn)
+            pe, em_s, e9_s = v(r, "p_exit_per_year_by_stage"), v(r, "exit_value_median_by_stage"), v(r, "exit_value_p90_by_stage")
+            ex_p = np.array([pe[min(s, len(pe) - 1)] for s in stage])
+            em = np.array([em_s[min(s, len(em_s) - 1)] for s in stage], dtype=float)
+            e9 = np.array([e9_s[min(s, len(e9_s) - 1)] for s in stage], dtype=float)
+            sell = op & (rng.random(n) < ex_p) & ~sold & (em > 0)
             if sell.any():
-                em = np.array([v_exit_median[min(s, len(v_exit_median) - 1)] for s in stage])
-                e9 = np.array([v_exit_p90[min(s, len(v_exit_p90) - 1)] for s in stage])
-                val = np.exp(rng.normal(np.log(np.maximum(em, 1)), np.maximum((np.log(np.maximum(e9, 2)) - np.log(np.maximum(em, 1))) / 1.2816, 0.05), n))
-                net = val * (1 - v(g, "effective_tax_on_exit"))
-                liquid = np.where(sell, liquid + net, liquid)
-                venture_alive = np.where(sell, False, venture_alive)
+                val = lognormal(rng, np.maximum(em, 1), np.maximum(e9, 2), n)
+                liquid = np.where(sell, liquid + val * (1 - exit_tax), liquid)
+                venture_alive &= ~sell
                 sold |= sell
-            # unsold venture equity: value at stage exit median x haircut
-            em = np.array([v_exit_median[min(s, len(v_exit_median) - 1)] for s in stage])
+            op = venture_alive
             biz_equity = np.where(op, em * v(r, "unsold_equity_haircut"), 0.0)
-            h += np.where(op, np.where(t < 2, hrs_yr1, hrs_later), 0.0)
-            ff += np.where(op, f2f_share, 0.0)
+            h += np.where(op, np.where(t < 2, v(r, "hours_yr1"), v(r, "hours_yr3")), 0.0)
+            ff += np.where(op, v(r, "f2f_share"), 0.0)
 
-        if app_overlay is not None:
-            # SOT: "the acquisition buys the right to a real 10% bet" - product for owned customers,
-            # started >= 2 years after completion, second person implements, capital from the risk pot.
-            ao = app_overlay
-            start = alive_biz & (acquired_year <= t - v(ao, "years_after_completion")) & ~app_started
-            can_afford = (liquid - floor) > v(ao, "capital")
-            start &= can_afford
-            liquid = np.where(start, liquid - v(ao, "capital"), liquid)
-            app_started |= start
-            stage = np.where(start, 1, stage)   # stage 1 = app live with owned customers
-            act = app_started & (stage >= 1) & (stage < 9)
-            succ = act & (stage == 1) & (rng.random(n) < v(ao, "p_success_per_year"))
-            dead = act & (stage == 1) & ~succ & (rng.random(n) < v(ao, "p_kill_per_year"))
-            stage = np.where(succ, 2, stage)
-            stage = np.where(dead, 9, stage)
-            payoff = act & (stage == 2)
-            extra = lognormal_from_median_and_p90(rng, v(ao, "profit_median"), v(ao, "profit_p90"), n)
-            liquid = np.where(payoff, liquid + extra * (1 - draw_tax), liquid)
-            ebitda = np.where(payoff, ebitda + extra, ebitda)  # lifts the exit value of the business
-            h += np.where(act & (stage < 9), v(ao, "hours_week"), 0.0)
+        if kind in ("build", "venture"):
+            gone = ~(alive_biz | venture_alive)
+            for b in range(int(v(g, "blocks_fallback_per_year"))):
+                lands = gone & (rng.random(n) < v(g, "backstop_p_block_lands"))
+                gross = lognormal(rng, v(g, "backstop_block_gross_median"), v(g, "backstop_block_gross_p90"), n)
+                liquid += np.where(lands, gross * (1 - (tax_sole if b == 0 else v(g, "effective_tax_on_contract_multi"))), 0.0)
+                h += np.where(lands, v(g, "backstop_hours_week_equiv"), 0.0)
+                blocks_done += lands
+                income_this_year |= lands
 
-        # 5. floor check, hours, reached -----------------------------------------------
+        # ---- backstop: one SC contracting block if cash is threatening the floor ----
+        if bs_on:
+            need = liquid < floor + bs_buffer
+            lands = need & (rng.random(n) < bs_p)
+            gross = lognormal(rng, bs_gross_med, bs_gross_p90, n)
+            tax = np.where(income_this_year, tax_stacked, tax_sole)
+            liquid += np.where(lands, gross * (1 - tax), 0.0)
+            h += np.where(lands, bs_hours, 0.0)
+            blocks_done += lands
+            backstop_used[:, t] = lands
+
         floor_breached |= liquid < floor
         hours[:, t] = h
         f2f[:, t] = np.clip(ff, 0, 1)
         nw = liquid + biz_equity
-        newly = (nw >= target) & (reached_year == 99)
-        reached_year = np.where(newly, year, reached_year)
+        nw_path[:, t] = nw
+        reached_year = np.where((nw >= target) & (reached_year == 99), year, reached_year)
 
     nw_final = liquid + biz_equity
+    pct = lambda a: {str(q): float(np.percentile(a, q)) for q in (5, 10, 25, 50, 75, 90, 95)}
+    acq = acquired_year < 99
+    draw_by_held = []
+    if kind in ("buy", "hybrid") and acq.any():
+        for k in range(years):
+            vals = []
+            for t in range(years):
+                sel = acq & (acquired_year == t - k) & (owner_draw_hist[:, t] != 0)
+                if sel.any():
+                    vals.append(owner_draw_hist[sel, t])
+            draw_by_held.append(float(np.median(np.concatenate(vals))) if vals else None)
+    cond = {
+        "p_target_given_acquired": float(np.mean(nw_final[acq] >= target)) if acq.any() else None,
+        "p_500k_given_acquired": float(np.mean(nw_final[acq] >= 500000)) if acq.any() else None,
+        "nw_percentiles_given_acquired": pct(nw_final[acq]) if acq.any() else None,
+        "p_target_given_not_acquired": float(np.mean(nw_final[~acq] >= target)) if (~acq).any() else None,
+        "median_draw_by_year_held": draw_by_held,
+        "median_acquisition_year": float(np.median(2027 + acquired_year[acq])) if acq.any() else None,
+        "median_ev_closed": float(np.median(ev_closed[acq])) if acq.any() else None,
+        "median_ebitda_at_close": float(np.median(ebitda_closed[acq])) if acq.any() else None,
+        "median_cash_in_deal": float(np.median(cash_in_deal[acq])) if acq.any() else None,
+        "ev_closed_p10_p90": [float(np.percentile(ev_closed[acq], 10)), float(np.percentile(ev_closed[acq], 90))] if acq.any() else None,
+    }
+    od = owner_draw_hist[owner_draw_hist != 0]
     res = {
-        "route": route,
-        "n": n,
+        "route": route, "kind": kind, "n": n,
         "p_target_by_2034": float(np.mean(nw_final >= target)),
         "p_target_by_2032": float(np.mean(reached_year <= 2032)),
+        "p_500k_by_2034": float(np.mean(nw_final >= 500000)),
         "p_target_liquid_only_2034": float(np.mean(liquid >= target)),
         "p_floor_breached": float(np.mean(floor_breached)),
-        "p_business_acquired": float(np.mean(acquired_year < 99)) if kind in ("buy", "hybrid") else (1.0 if kind in ("build", "venture") else 0.0),
-        "p_business_failed": float(np.mean(deal_failed)),
+        "p_business_acquired": float(np.mean(acquired_year < 99)),
+        "p_business_failed": float(np.mean(failed)),
         "p_sold": float(np.mean(sold)),
+        "p_backstop_ever": float(np.mean(backstop_used.any(axis=1))),
+        "mean_backstop_years": float(backstop_used.sum(axis=1).mean()),
+        "mean_blocks_total": float(blocks_done.mean()),
+        "mean_employed_days_total": float(blocks_done.mean() * 45),
         "median_year_reached": float(np.median(np.where(reached_year == 99, 2040, reached_year))),
-        "nw_percentiles_2034": {str(q): float(np.percentile(nw_final, q)) for q in (5, 10, 25, 50, 75, 90, 95)},
-        "liquid_percentiles_2034": {str(q): float(np.percentile(liquid, q)) for q in (5, 10, 25, 50, 75, 90, 95)},
-        "median_owner_draw_when_operating": float(np.median(owner_draw[owner_draw != 0])) if np.any(owner_draw != 0) else 0.0,
-        "mean_hours_by_year": [float(np.mean(hours[:, t])) for t in range(years)],
-        "mean_f2f_by_year": [float(np.mean(f2f[:, t])) for t in range(years)],
+        "nw_percentiles_2034": pct(nw_final),
+        "liquid_percentiles_2034": pct(liquid),
+        "median_owner_draw_when_operating": float(np.median(od)) if od.size else 0.0,
+        "owner_draw_p25_p75": [float(np.percentile(od, 25)), float(np.percentile(od, 75))] if od.size else [0, 0],
+        "mean_hours_by_year": [float(hours[:, t].mean()) for t in range(years)],
+        "mean_f2f_by_year": [float(f2f[:, t].mean()) for t in range(years)],
         "reached_year_hist": {str(y): float(np.mean(reached_year == y)) for y in range(2027, 2035)},
+        "fan": {str(q): [float(np.percentile(nw_path[:, t], q)) for t in range(years)] for q in (10, 25, 50, 75, 90)},
+        "years": [2027 + t for t in range(years)],
+        "conditional": cond,
     }
-    return res, nw_final, liquid
-
-
-def fan(nw_by_year):
-    return {str(q): [float(np.percentile(col, q)) for col in nw_by_year] for q in (10, 25, 50, 75, 90)}
+    return res
 
 
 if __name__ == "__main__":
     p = load_params()
     out = {}
     for route in p["routes"]:
-        res, _, _ = simulate(route, json.loads(json.dumps(p)))
+        res = simulate(route, p)
         out[route] = res
-        print(f"{route:20s} P(750k by 2034)={res['p_target_by_2034']:.2f}  P(floor breached)={res['p_floor_breached']:.2f}  "
-              f"P(fail)={res['p_business_failed']:.2f}  median NW={res['nw_percentiles_2034']['50']:,.0f}")
+        print(f"{route:18s} P750k={res['p_target_by_2034']:.2f} P500k={res['p_500k_by_2034']:.2f} floor={res['p_floor_breached']:.2f} "
+              f"acq={res['p_business_acquired']:.2f} fail={res['p_business_failed']:.2f} sold={res['p_sold']:.2f} "
+              f"backstop={res['p_backstop_ever']:.2f} draw={res['median_owner_draw_when_operating']:>8,.0f} "
+              f"NW p10/50/90={res['nw_percentiles_2034']['10']:>8,.0f}/{res['nw_percentiles_2034']['50']:>8,.0f}/{res['nw_percentiles_2034']['90']:>9,.0f}")
     with open(os.path.join(HERE, "results.json"), "w") as f:
-        json.dump(out, f, indent=2)
+        json.dump(out, f, indent=1)
