@@ -155,7 +155,14 @@ def simulate(route, p, n=20000, seed=42, overrides=None):
 
     for t in range(years):
         year = 2027 + t
-        liquid *= (1 + rng.normal(mean_r, sd_r, n))
+        w = v(g, "crypto_sleeve_share") if "crypto_sleeve_share" in g else 0.0
+        idx_ret = rng.normal(mean_r, sd_r, n)
+        if w > 0:
+            cm, cs = v(g, "crypto_mean"), v(g, "crypto_sd")
+            cry_ret = np.exp(rng.normal(np.log(1 + cm) - 0.5 * np.log(1 + cs**2 / (1 + cm)**2), np.sqrt(np.log(1 + cs**2 / (1 + cm)**2)), n)) - 1
+            liquid *= (1 + (1 - w) * idx_ret + w * cry_ret)   # sleeve rebalanced yearly to w of liquid
+        else:
+            liquid *= (1 + idx_ret)
         liquid -= burn
         h = np.zeros(n)
         ff = np.zeros(n)

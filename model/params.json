@@ -176,6 +176,27 @@
    "high": 1.5,
    "src": "acquisition_finance_uk.md \u2014 lenders require DSCR 1.25\u20131.5x (Allica 150% debt service cover). Bank debt is reduced until (EBITDA \u2212 manager cost) \u00f7 total debt service \u2265 this; if the cash gap then exceeds the risk pot the deal scales down.",
    "confidence": "measured"
+  },
+  "crypto_sleeve_share": {
+   "value": 0.0,
+   "low": 0.0,
+   "high": 0.4,
+   "src": "SOT: crypto sleeve fixed at 10% of investable (never from the floor). Default 0 in the base runs; Dale's 28 Sep 2026 instruction: factor a crypto block in.",
+   "confidence": "measured"
+  },
+  "crypto_mean": {
+   "value": 0.25,
+   "low": 0.0,
+   "high": 0.6,
+   "src": "Assumed arithmetic mean annual return of the crypto sleeve; no forecast source. Sensitivity input.",
+   "confidence": "inferred"
+  },
+  "crypto_sd": {
+   "value": 0.8,
+   "low": 0.5,
+   "high": 1.2,
+   "src": "Assumed annual volatility of the sleeve (BTC realised vol has run 50\u201380% p.a. historically); lognormal so a year can lose most of the sleeve. Sensitivity input.",
+   "confidence": "inferred"
   }
  },
  "routes": {
