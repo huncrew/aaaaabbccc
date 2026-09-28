@@ -3512,6 +3512,85 @@
     "high": 2,
     "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
     "confidence": "measured"
+   },
+   "side_option": {
+    "start_year": {
+     "value": 0,
+     "low": 0,
+     "high": 2,
+     "src": "Probe starts in 2027 alongside contracting and the search.",
+     "confidence": "measured"
+    },
+    "test_capital": {
+     "value": 5000,
+     "low": 2000,
+     "high": 10000,
+     "src": "Samples, a supplier visit, a trade-show ticket, five buyer conversations. Camuffo et al. 2020/2024 RCTs: a scientific approach (hypothesis, test with customers, decide) raises revenue and idea termination (+9.8pp). SOT five-buyer test.",
+     "confidence": "derived"
+    },
+    "p_pass_five_buyer_test": {
+     "value": 0.35,
+     "low": 0.2,
+     "high": 0.5,
+     "src": "Share of probes where five trade buyers pre-commit. No direct data; MicroConf: 65% of founders have \u226410 customers; SOT: 'one yes \u2192 box a budget'. Inferred.",
+     "confidence": "inferred"
+    },
+    "trade_capital": {
+     "value": 25000,
+     "low": 10000,
+     "high": 50000,
+     "src": "First container / first stock run plus working capital, from the risk pot never the floor. Wholesale stock days and debtor days from sector_economics_uk.md.",
+     "confidence": "derived"
+    },
+    "p_fail_per_year": {
+     "value": 0.2,
+     "low": 0.12,
+     "high": 0.3,
+     "src": "ONS Business Demography 2024 SIC 46 wholesale: 3-yr survival 44\u201356%, 5-yr 41.7% \u2192 ~20%/yr hazard; supplier termination on 3\u201312 months' notice (CMS distribution-agreement guide).",
+     "confidence": "measured"
+    },
+    "profit_median": {
+     "value": 25000,
+     "low": 10000,
+     "high": 45000,
+     "src": "Dale's own record: Etsy line reached ~\u00a330k passive (SOT track record); wholesale net margin median 5% on \u00a30.5m turnover \u2248 \u00a325k (3DMAI 2026).",
+     "confidence": "derived"
+    },
+    "profit_p90": {
+     "value": 100000,
+     "low": 60000,
+     "high": 200000,
+     "src": "The JCB-parts-importer tail (SOT 'models he's seen work'); technical/exclusive lines carry 20\u201330% gross margin; 3.8% of wholesale/retail self-employed earn \u2265\u00a350k (HMRC SPI 2023-24).",
+     "confidence": "derived"
+    },
+    "ebitda_uplift_share": {
+     "value": 1.0,
+     "low": 0.5,
+     "high": 1.0,
+     "src": "Once inside the bought business the line's profit is that company's EBITDA (SOT: 'ecommerce comes back as the second line of the first business').",
+     "confidence": "derived"
+    },
+    "resale_multiple": {
+     "value": 2.0,
+     "low": 1.0,
+     "high": 3.0,
+     "src": "Stand-alone distributor asks 1.4\u20134.0x (listings); Flippa/EF sold 1.4\u20132.0x.",
+     "confidence": "measured"
+    },
+    "hours_week_testing": {
+     "value": 6,
+     "low": 3,
+     "high": 10,
+     "src": "Five buyer conversations, supplier calls; bursty, face to face. Inferred.",
+     "confidence": "inferred"
+    },
+    "hours_week_trading": {
+     "value": 10,
+     "low": 5,
+     "high": 20,
+     "src": "Sourcing, supplier negotiation, a packer/3PL, trade customers; the Etsy operating shape with an operator installed. Inferred.",
+     "confidence": "inferred"
+    }
    }
   },
   "hybrid_3blocks_2y": {

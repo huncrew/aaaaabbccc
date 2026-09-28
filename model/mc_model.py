@@ -152,6 +152,8 @@ def simulate(route, p, n=20000, seed=42, overrides=None):
         venture_alive[:] = True
         acquired_year[:] = 0
     app = r.get("app_option") if kind == "hybrid" else None
+    side = r.get("side_option")   # a self-started single-line B2B import/distribution probe run alongside contracting and the search
+    side_stage = np.zeros(n, dtype=int)   # 0 not started, 1 testing (five-buyer test), 2 trading, 9 killed/folded into the bought business
 
     for t in range(years):
         year = 2027 + t
@@ -300,6 +302,29 @@ def simulate(route, p, n=20000, seed=42, overrides=None):
             liquid = np.where(paying, liquid + extra * (1 - draw_tax), liquid)
             ebitda = np.where(paying, ebitda + extra * v(app, "ebitda_uplift_share"), ebitda)
             h += np.where(app_started & (stage < 9) & alive_biz, v(app, "hours_week"), 0.0)
+
+        # ---- side line: one-line B2B import/distribution probe (scientific method: test with 5 trade buyers, kill or scale) ----
+        if side is not None:
+            st = (t == v(side, "start_year")) & (side_stage == 0) & ((liquid - floor) > v(side, "test_capital"))
+            liquid = np.where(st, liquid - v(side, "test_capital"), liquid)
+            side_stage = np.where(st, 1, side_stage)
+            testing = side_stage == 1
+            passed = testing & (rng.random(n) < v(side, "p_pass_five_buyer_test"))
+            stock_ok = passed & ((liquid - floor) > v(side, "trade_capital"))
+            liquid = np.where(stock_ok, liquid - v(side, "trade_capital"), liquid)
+            side_stage = np.where(stock_ok, 2, np.where(testing, 9, side_stage))   # fail the test -> stop, small loss
+            trading = side_stage == 2
+            die = trading & (rng.random(n) < v(side, "p_fail_per_year"))
+            side_stage = np.where(die, 9, side_stage)
+            trading = side_stage == 2
+            sp = lognormal(rng, v(side, "profit_median"), v(side, "profit_p90"), n)
+            liquid = np.where(trading, liquid + sp * (1 - draw_tax), liquid)
+            income_this_year |= trading & (sp > burn)
+            # once a business is bought, the line becomes its second channel: profit lifts EBITDA (and exit value) instead
+            ebitda = np.where(trading & alive_biz, ebitda + sp * v(side, "ebitda_uplift_share"), ebitda)
+            biz_equity = np.where(trading & ~alive_biz, sp * v(side, "resale_multiple"), biz_equity)
+            h += np.where(side_stage == 1, v(side, "hours_week_testing"), np.where(trading, v(side, "hours_week_trading"), 0.0))
+            ff += np.where((side_stage == 1) | trading, 0.5, 0.0)
 
         # ---- build from zero ----
         if kind == "build":
