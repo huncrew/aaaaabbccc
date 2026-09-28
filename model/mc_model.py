@@ -138,6 +138,23 @@ def simulate(route: str, p: dict, n: int = 20000, seed: int = 42, overrides: dic
         fit = v(r, "fit_multiplier")
         draw_tax = v(g, "effective_tax_on_draw")
 
+    if kind == "venture":
+        v_capital_yr = v(r, "capital_per_year")              # cash burn on the build (second person, infra) yrs 0-1
+        v_p_advance = v(r, "p_advance_stage")                # list: P(move from stage k to k+1) per year
+        v_p_kill = v(r, "p_kill_per_year")                   # list by stage: P(shut down) per year
+        v_profit_by_stage = v(r, "owner_profit_by_stage")    # list: median owner profit at each stage
+        v_profit_p90_by_stage = v(r, "owner_profit_p90_by_stage")
+        v_p_exit = v(r, "p_exit_per_year_by_stage")          # list by stage
+        v_exit_median = v(r, "exit_value_median_by_stage")   # list
+        v_exit_p90 = v(r, "exit_value_p90_by_stage")
+        hrs_yr1, hrs_later = v(r, "hours_yr1"), v(r, "hours_yr3")
+        f2f_share = v(r, "f2f_share")
+        fit = v(r, "fit_multiplier")
+        draw_tax = v(g, "effective_tax_on_draw")
+        venture_alive[:] = True
+        app_started[:] = True
+        acquired_year[:] = 0
+    app_overlay = r.get("app_option") if kind == "hybrid" else None
     searching = np.ones(n, dtype=bool) if kind in ("buy", "hybrid") else np.zeros(n, dtype=bool)
     search_years = np.zeros(n, dtype=int)
     max_search_years = v(r, "max_search_years") if kind in ("buy", "hybrid") else 0
@@ -148,6 +165,12 @@ def simulate(route: str, p: dict, n: int = 20000, seed: int = 42, overrides: dic
         alive_biz[:] = True
         acquired_year[:] = 0
     years_held = np.zeros(n, dtype=int)
+    debt_service_all = np.zeros(n)
+    debt_years_left = np.zeros(n)
+    # venture (AI app) state
+    stage = np.zeros(n, dtype=int)        # 0 building, 1 first revenue, 2 traction, 3 scaled
+    venture_alive = np.zeros(n, dtype=bool)
+    app_started = np.zeros(n, dtype=bool)
 
     for t in range(years):
         year = 2027 + t  # the calendar year being simulated (t=0 -> 2027)
@@ -212,9 +235,6 @@ def simulate(route: str, p: dict, n: int = 20000, seed: int = 42, overrides: dic
                 ann_bank = np.where(bank > 0, bank * bank_rate / (1 - (1 + bank_rate) ** -bank_term), 0.0)
                 ann_vl = np.where(vendor > 0, vendor * vl_rate / (1 - (1 + vl_rate) ** -vl_term), 0.0) if vl_rate > 0 else vendor / vl_term
                 debt_service = ann_bank + ann_vl
-                if "debt_service" not in locals():
-                    debt_service_all = np.zeros(n)
-                    debt_years_left = np.zeros(n)
                 debt_service_all[idx] = np.where(ok, debt_service, 0.0)
                 debt_years_left[idx] = np.where(ok, max(bank_term, vl_term), 0)
 
@@ -293,6 +313,63 @@ def simulate(route: str, p: dict, n: int = 20000, seed: int = 42, overrides: dic
                 alive_biz = np.where(sell, False, alive_biz)
                 sold |= sell
 
+        if kind == "venture":
+            op = venture_alive
+            # spend build capital in the first two years
+            spend = v_capital_yr if t < 2 else 0.0
+            liquid = np.where(op, liquid - spend, liquid)
+            # advance / kill
+            adv_p = np.array([v_p_advance[min(s, len(v_p_advance) - 1)] for s in stage]) * fit
+            kill_p = np.array([v_p_kill[min(s, len(v_p_kill) - 1)] for s in stage]) / fit
+            adv = op & (rng.random(n) < adv_p) & (stage < 3)
+            kill = op & ~adv & (rng.random(n) < kill_p)
+            stage = np.where(adv, stage + 1, stage)
+            venture_alive = np.where(kill, False, venture_alive)
+            deal_failed |= kill
+            op = venture_alive
+            pm = np.array([v_profit_by_stage[min(s, len(v_profit_by_stage) - 1)] for s in stage])
+            p9 = np.array([v_profit_p90_by_stage[min(s, len(v_profit_p90_by_stage) - 1)] for s in stage])
+            prof = np.where(pm > 0, np.exp(rng.normal(np.log(np.maximum(pm, 1)), np.maximum((np.log(np.maximum(p9, 2)) - np.log(np.maximum(pm, 1))) / 1.2816, 0.05), n)), 0.0)
+            prof = np.where(op, prof, 0.0)
+            liquid = np.where(op & (prof > 0), liquid + prof * (1 - draw_tax), liquid)
+            owner_draw = np.where(op, prof, owner_draw)
+            ex_p = np.array([v_p_exit[min(s, len(v_p_exit) - 1)] for s in stage])
+            sell = op & (rng.random(n) < ex_p) & ~sold
+            if sell.any():
+                em = np.array([v_exit_median[min(s, len(v_exit_median) - 1)] for s in stage])
+                e9 = np.array([v_exit_p90[min(s, len(v_exit_p90) - 1)] for s in stage])
+                val = np.exp(rng.normal(np.log(np.maximum(em, 1)), np.maximum((np.log(np.maximum(e9, 2)) - np.log(np.maximum(em, 1))) / 1.2816, 0.05), n))
+                net = val * (1 - v(g, "effective_tax_on_exit"))
+                liquid = np.where(sell, liquid + net, liquid)
+                venture_alive = np.where(sell, False, venture_alive)
+                sold |= sell
+            # unsold venture equity: value at stage exit median x haircut
+            em = np.array([v_exit_median[min(s, len(v_exit_median) - 1)] for s in stage])
+            biz_equity = np.where(op, em * v(r, "unsold_equity_haircut"), 0.0)
+            h += np.where(op, np.where(t < 2, hrs_yr1, hrs_later), 0.0)
+            ff += np.where(op, f2f_share, 0.0)
+
+        if app_overlay is not None:
+            # SOT: "the acquisition buys the right to a real 10% bet" - product for owned customers,
+            # started >= 2 years after completion, second person implements, capital from the risk pot.
+            ao = app_overlay
+            start = alive_biz & (acquired_year <= t - v(ao, "years_after_completion")) & ~app_started
+            can_afford = (liquid - floor) > v(ao, "capital")
+            start &= can_afford
+            liquid = np.where(start, liquid - v(ao, "capital"), liquid)
+            app_started |= start
+            stage = np.where(start, 1, stage)   # stage 1 = app live with owned customers
+            act = app_started & (stage >= 1) & (stage < 9)
+            succ = act & (stage == 1) & (rng.random(n) < v(ao, "p_success_per_year"))
+            dead = act & (stage == 1) & ~succ & (rng.random(n) < v(ao, "p_kill_per_year"))
+            stage = np.where(succ, 2, stage)
+            stage = np.where(dead, 9, stage)
+            payoff = act & (stage == 2)
+            extra = lognormal_from_median_and_p90(rng, v(ao, "profit_median"), v(ao, "profit_p90"), n)
+            liquid = np.where(payoff, liquid + extra * (1 - draw_tax), liquid)
+            ebitda = np.where(payoff, ebitda + extra, ebitda)  # lifts the exit value of the business
+            h += np.where(act & (stage < 9), v(ao, "hours_week"), 0.0)
+
         # 5. floor check, hours, reached -----------------------------------------------
         floor_breached |= liquid < floor
         hours[:, t] = h
@@ -309,7 +386,7 @@ def simulate(route: str, p: dict, n: int = 20000, seed: int = 42, overrides: dic
         "p_target_by_2032": float(np.mean(reached_year <= 2032)),
         "p_target_liquid_only_2034": float(np.mean(liquid >= target)),
         "p_floor_breached": float(np.mean(floor_breached)),
-        "p_business_acquired": float(np.mean(acquired_year < 99)) if kind in ("buy", "hybrid") else (1.0 if kind == "build" else 0.0),
+        "p_business_acquired": float(np.mean(acquired_year < 99)) if kind in ("buy", "hybrid") else (1.0 if kind in ("build", "venture") else 0.0),
         "p_business_failed": float(np.mean(deal_failed)),
         "p_sold": float(np.mean(sold)),
         "median_year_reached": float(np.median(np.where(reached_year == 99, 2040, reached_year))),
