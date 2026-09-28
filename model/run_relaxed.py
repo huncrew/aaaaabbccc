@@ -1,0 +1,35 @@
+import json, mc_model as M
+p = M.load_params(); N = 10000; B = "hybrid_2blocks_2y"
+def run(name, ov, route=B):
+    r = M.simulate(route, p, n=N, overrides=ov); c = r["conditional"]
+    print(f"{name:70s} P750={r['p_target_by_2034']:5.1%} P500={r['p_500k_by_2034']:5.1%} deal={r['p_business_acquired']:4.0%} P750|deal={(c['p_target_given_acquired'] or 0):5.1%} EV={((c['median_ev_closed'] or 0)/1000):4.0f}k NW50={r['nw_percentiles_2034']['50']/1000:4.0f}k days={r['mean_employed_days_total']:4.0f} hrs={[round(h) for h in r['mean_hours_by_year']]}")
+    return r
+R = f"routes.{B}."
+print("--- A. the SOT constraints as written, for reference")
+run("SOT plan (1 block, buy 2027, floor £120k)", {}, "hybrid_plan")
+run("2 blocks/yr x2 then buy (base case)", {})
+print("--- B. what Dale says is movable: more contracting")
+run("3 blocks/yr x2, then buy, 1 block/yr while searching", {R+"blocks_per_year":3})
+run("4 blocks/yr (~£12k/month) x1, then buy", {R+"blocks_per_year":4, R+"contract_years_before_search":1})
+run("4 blocks/yr x2, then buy", {R+"blocks_per_year":4})
+run("4 blocks/yr x2, buy, + 1 block/yr while running it", {R+"blocks_per_year":4, R+"blocks_while_operating":1})
+run("4 blocks/yr x2, buy, + 2 blocks/yr while running it", {R+"blocks_per_year":4, R+"blocks_while_operating":2})
+print("--- C. use the floor")
+run("2 blocks x2, floor £60k", {"general.floor":60000})
+run("4 blocks x2, floor £60k", {R+"blocks_per_year":4, "general.floor":60000})
+run("4 blocks x2, floor £60k, 1 block/yr while running", {R+"blocks_per_year":4, "general.floor":60000, R+"blocks_while_operating":1})
+print("--- D. cash + a better-negotiated deal")
+run("4 blocks x2, floor £60k, 50% vendor note, 10y GGS", {R+"blocks_per_year":4, "general.floor":60000, R+"seller_finance_share":0.5, R+"bank_term_years":10})
+run("  + buy at 2.3x (services/logistics pricing)", {R+"blocks_per_year":4, "general.floor":60000, R+"seller_finance_share":0.5, R+"bank_term_years":10, R+"multiple_median":2.3, R+"exit_multiple_median":2.8})
+run("  + bigger target deal (EV £400k median)", {R+"blocks_per_year":4, "general.floor":60000, R+"seller_finance_share":0.5, R+"bank_term_years":10, R+"multiple_median":2.3, R+"exit_multiple_median":2.8, R+"ev_median":400000, R+"ev_p90":600000})
+run("  + EBITDA growth 8%/yr (second line)", {R+"blocks_per_year":4, "general.floor":60000, R+"seller_finance_share":0.5, R+"bank_term_years":10, R+"multiple_median":2.3, R+"exit_multiple_median":2.8, R+"ev_median":400000, R+"ev_p90":600000, R+"ebitda_growth_median":0.08})
+run("  + 1 block/yr while running", {R+"blocks_per_year":4, "general.floor":60000, R+"seller_finance_share":0.5, R+"bank_term_years":10, R+"multiple_median":2.3, R+"exit_multiple_median":2.8, R+"ev_median":400000, R+"ev_p90":600000, R+"ebitda_growth_median":0.08, R+"blocks_while_operating":1})
+run("  + exit at 3.5x when sold", {R+"blocks_per_year":4, "general.floor":60000, R+"seller_finance_share":0.5, R+"bank_term_years":10, R+"multiple_median":2.3, R+"exit_multiple_median":3.5, R+"ev_median":400000, R+"ev_p90":600000, R+"ebitda_growth_median":0.08, R+"blocks_while_operating":1})
+print("--- E. contracting only, heavy")
+run("4 blocks/yr for 8 years (~£12k/month, no business)", {"routes.contract_heavy.blocks_per_year":4}, "contract_heavy")
+run("4 blocks/yr for 8 years, floor irrelevant", {"routes.contract_heavy.blocks_per_year":4, "general.floor":0}, "contract_heavy")
+print("--- F. build with heavy contracting cash behind it")
+run("build B2B services, 2 fallback blocks/yr if it dies", {"general.blocks_fallback_per_year":2}, "build_services")
+run("build AWS/AI consultancy (as modelled)", {}, "build_aws_partner")
+run("build AI app w/ 2nd person, fit=1, 2 fallback blocks/yr", {"routes.build_ai_app.fit_multiplier":1.0, "general.blocks_fallback_per_year":2}, "build_ai_app")
+run("hybrid + app for owned customers, 4 blocks x2, floor £60k, 2.3x, 50% VN", {"routes.hybrid_plan_app.blocks_per_year":4, "general.floor":60000, "routes.hybrid_plan_app.seller_finance_share":0.5, "routes.hybrid_plan_app.bank_term_years":10, "routes.hybrid_plan_app.multiple_median":2.3, "routes.hybrid_plan_app.exit_multiple_median":2.8, "routes.hybrid_plan_app.ev_median":400000, "routes.hybrid_plan_app.ev_p90":600000, "routes.hybrid_plan_app.blocks_while_operating":1}, "hybrid_plan_app")

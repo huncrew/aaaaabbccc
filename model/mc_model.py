@@ -129,6 +129,7 @@ def simulate(route, p, n=20000, seed=42, overrides=None):
         blocks_pre = int(v(r, "blocks_per_year")) if "blocks_per_year" in r else 0
         blocks_search = int(v(r, "blocks_during_search")) if "blocks_during_search" in r else 0
         blocks_fallback = int(v(g, "blocks_fallback_per_year"))
+        blocks_operating = int(v(r, "blocks_while_operating")) if "blocks_while_operating" in r else 0
         p_land = v(r, "p_block_lands") if "p_block_lands" in r else v(g, "backstop_p_block_lands")
         c_tax_one = tax_sole
         c_tax_multi = v(r, "effective_tax_on_contract") if "effective_tax_on_contract" in r else v(g, "effective_tax_on_contract_multi")
@@ -171,7 +172,8 @@ def simulate(route, p, n=20000, seed=42, overrides=None):
         if kind in ("buy", "hybrid"):
             # planned blocks: blocks_pre per year before the search opens, blocks_search per year while searching
             idle = (~searching | (search_years >= max_search)) & ~alive_biz & (t >= search_start)
-            nb = np.where(t < search_start, blocks_pre, np.where(searching & (search_years < max_search) & (acquired_year == 99), blocks_search, np.where(idle, blocks_fallback, 0)))
+            operating = alive_biz & (acquired_year < t)   # from the second year of ownership (SOT: not before 100 days / three paid months)
+            nb = np.where(t < search_start, blocks_pre, np.where(searching & (search_years < max_search) & (acquired_year == 99), blocks_search, np.where(idle, blocks_fallback, np.where(operating, blocks_operating, 0))))
             for b in range(int(nb.max()) if nb.size else 0):
                 do = nb > b
                 lands = do & (rng.random(n) < p_land)

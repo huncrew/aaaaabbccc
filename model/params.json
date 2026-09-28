@@ -582,6 +582,13 @@
     "high": 3,
     "src": "Pure buy route: no planned blocks during search.",
     "confidence": "measured"
+   },
+   "blocks_while_operating": {
+    "value": 0,
+    "low": 0,
+    "high": 2,
+    "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
+    "confidence": "measured"
    }
   },
   "buy_services": {
@@ -863,6 +870,13 @@
     "low": 0,
     "high": 3,
     "src": "Pure buy route: no planned blocks during search.",
+    "confidence": "measured"
+   },
+   "blocks_while_operating": {
+    "value": 0,
+    "low": 0,
+    "high": 2,
+    "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
     "confidence": "measured"
    }
   },
@@ -1146,6 +1160,13 @@
     "high": 3,
     "src": "Pure buy route: no planned blocks during search.",
     "confidence": "measured"
+   },
+   "blocks_while_operating": {
+    "value": 0,
+    "low": 0,
+    "high": 2,
+    "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
+    "confidence": "measured"
    }
   },
   "buy_logistics": {
@@ -1427,6 +1448,13 @@
     "low": 0,
     "high": 3,
     "src": "Pure buy route: no planned blocks during search.",
+    "confidence": "measured"
+   },
+   "blocks_while_operating": {
+    "value": 0,
+    "low": 0,
+    "high": 2,
+    "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
     "confidence": "measured"
    }
   },
@@ -1710,6 +1738,13 @@
     "high": 3,
     "src": "Pure buy route: no planned blocks during search.",
     "confidence": "measured"
+   },
+   "blocks_while_operating": {
+    "value": 0,
+    "low": 0,
+    "high": 2,
+    "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
+    "confidence": "measured"
    }
   },
   "buy_saas": {
@@ -1992,6 +2027,13 @@
     "high": 3,
     "src": "Pure buy route: no planned blocks during search.",
     "confidence": "measured"
+   },
+   "blocks_while_operating": {
+    "value": 0,
+    "low": 0,
+    "high": 2,
+    "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
+    "confidence": "measured"
    }
   },
   "buy_agency": {
@@ -2273,6 +2315,13 @@
     "low": 0,
     "high": 3,
     "src": "Pure buy route: no planned blocks during search.",
+    "confidence": "measured"
+   },
+   "blocks_while_operating": {
+    "value": 0,
+    "low": 0,
+    "high": 2,
+    "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
     "confidence": "measured"
    }
   },
@@ -2843,6 +2892,13 @@
     "high": 3,
     "src": "SOT: the one block happens while the search runs (Feb\u2013Apr 2027). One block per search year.",
     "confidence": "measured"
+   },
+   "blocks_while_operating": {
+    "value": 0,
+    "low": 0,
+    "high": 2,
+    "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
+    "confidence": "measured"
    }
   },
   "hybrid_2blocks_1y": {
@@ -3132,6 +3188,13 @@
     "high": 3,
     "src": "Variant: two blocks in 2027 (~90 billed days), search opens 2028 with one block/yr while searching. Tests whether one extra block makes the deal fundable.",
     "confidence": "derived"
+   },
+   "blocks_while_operating": {
+    "value": 0,
+    "low": 0,
+    "high": 2,
+    "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
+    "confidence": "measured"
    }
   },
   "hybrid_2blocks_2y": {
@@ -3421,6 +3484,13 @@
     "high": 3,
     "src": "Variant: two blocks/yr in 2027\u201328 (~180 billed days total), search opens 2029. SOT: 'labour is front-loaded into the next ~3 years while the day rate is at its peak'.",
     "confidence": "derived"
+   },
+   "blocks_while_operating": {
+    "value": 0,
+    "low": 0,
+    "high": 2,
+    "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
+    "confidence": "measured"
    }
   },
   "hybrid_3blocks_2y": {
@@ -3710,6 +3780,13 @@
     "high": 3,
     "src": "Variant: three blocks/yr in 2027\u201328 (~270 billed days). The upper bound the SOT says health cannot sustain; shown to bound the trade-off.",
     "confidence": "derived"
+   },
+   "blocks_while_operating": {
+    "value": 0,
+    "low": 0,
+    "high": 2,
+    "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
+    "confidence": "measured"
    }
   },
   "build_aws_partner": {
@@ -4399,6 +4476,13 @@
      "src": "Architect/seller hours only (SOT: never sole implementer). Inferred.",
      "confidence": "inferred"
     }
+   },
+   "blocks_while_operating": {
+    "value": 0,
+    "low": 0,
+    "high": 2,
+    "src": "SOT BOX COUNT: once the business runs on 10\u201315 hrs/week and has paid the target for three months with the manager proven, the odd contract (2\u20133 months/yr) is a legitimate top-up \u2014 never before the first 100 days. Applied from the second year of ownership. Default 0 (SOT plan as written).",
+    "confidence": "measured"
    }
   }
  }
