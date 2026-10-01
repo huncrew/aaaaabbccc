@@ -1,0 +1,21 @@
+--- 3 days/week from 2027, floor £120k kept
+search from 2027, deal when cash allows, taper 3-2-1-0         P750=14.1% P500=47.3% deal= 45% yr=2028 EV= 218k P750|deal=19.6% NW50= 487k days= 749 hrs=[40, 42, 24, 22, 19, 18, 17, 17]
+1 year banked first, then search, taper 3-2-1-0                P750=17.2% P500=49.8% deal= 56% yr=2028 EV= 252k P750|deal=23.0% NW50= 499k days= 735 hrs=[17, 44, 42, 26, 23, 19, 18, 18]
+2 years banked first, then search, taper 3-2-1-0               P750=19.3% P500=52.2% deal= 60% yr=2029 EV= 276k P750|deal=25.4% NW50= 512k days= 749 hrs=[17, 17, 45, 42, 26, 23, 19, 18]
+2 years banked, negotiated deal (2.3x, £400k, 50% VN, 10y, 8% gr) P750=36.8% P500=64.6% deal= 58% yr=2029 EV= 358k P750|deal=55.9% NW50= 607k days= 749 hrs=[17, 17, 44, 42, 26, 22, 19, 18]
+1 year banked, negotiated deal                                 P750=34.6% P500=62.7% deal= 55% yr=2028 EV= 328k P750|deal=54.9% NW50= 588k days= 733 hrs=[17, 43, 42, 26, 22, 19, 18, 17]
+--- floor usable to £60k
+2 years banked, negotiated deal, floor £60k                    P750=40.0% P500=66.8% deal= 62% yr=2029 EV= 389k P750|deal=57.5% NW50= 633k days= 737 hrs=[17, 17, 46, 42, 26, 23, 19, 18]
+1 year banked, negotiated deal, floor £60k                     P750=39.2% P500=66.1% deal= 62% yr=2028 EV= 372k P750|deal=56.8% NW50= 622k days= 710 hrs=[17, 45, 42, 27, 23, 19, 18, 18]
+--- keep 3 days/week throughout (business on top, not replacing)
+2 years banked, negotiated deal, keep 3 days/wk                P750=41.0% P500=68.3% deal= 58% yr=2029 EV= 358k P750|deal=63.1% NW50= 647k days= 870 hrs=[17, 17, 44, 42, 28, 27, 26, 23]
+--- horizon
+2 yrs banked, negotiated, taper, floor 60k -> by 2036          P750=51.6% P500=78.3% deal= 62% yr=2029 EV= 389k P750|deal=65.5% NW50= 770k days= 898 hrs=[17, 17, 46, 42, 26, 23, 19, 18, 17, 17]
+2 yrs banked, negotiated, taper, floor 60k -> by 2038          P750=63.6% P500=85.9% deal= 62% yr=2029 EV= 389k P750|deal=72.3% NW50= 917k days=1083 hrs=[17, 17, 46, 42, 26, 23, 19, 18, 17, 17, 17, 17]
+--- no business at all: 3 days/week for 8 years
+3 days/wk contracting only, 8 years                            P750= 7.7% P500=45.1% deal=  0% yr=0 EV=   0k P750|deal= 0.0% NW50= 481k days= 865 hrs=[17, 17, 17, 17, 17, 17, 17, 17]
+3 days/wk contracting only, by 2036                            P750=23.4% P500=66.4% deal=  0% yr=0 EV=   0k P750|deal= 0.0% NW50= 579k days=1081 hrs=[17, 17, 17, 17, 17, 17, 17, 17, 17, 17]
+--- pessimistic checks on the lead case
+lead case, fit 0.8, severe yr-1 decline 25%                    P750=27.6% P500=58.1% deal= 49% yr=2029 EV= 389k P750|deal=44.2% NW50= 550k days= 773 hrs=[17, 17, 42, 40, 24, 21, 19, 17]
+lead case, blocks land only 65%                                P750=32.8% P500=54.5% deal= 61% yr=2029 EV= 375k P750|deal=51.6% NW50= 534k days= 605 hrs=[14, 14, 42, 39, 23, 20, 17, 16]
+lead case, 3% growth not 8%                                    P750=34.1% P500=63.1% deal= 62% yr=2029 EV= 389k P750|deal=48.0% NW50= 592k days= 737 hrs=[17, 17, 46, 42, 26, 23, 19, 18]
