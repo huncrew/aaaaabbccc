@@ -1,0 +1,67 @@
+contract_only      fit P750k=0.00 raw=0.00 P500k=0.02 acq=0.00 P750k|acq=None days=270 NW50=204,027
+contract_heavy     fit P750k=0.04 raw=0.04 P500k=0.32 acq=0.00 P750k|acq=None days=756 NW50=425,797
+buy_distributor    fit P750k=0.00 raw=0.00 P500k=0.01 acq=0.05 P750k|acq=0.03293413173652695 days=258 NW50=187,030
+buy_services       fit P750k=0.00 raw=0.00 P500k=0.01 acq=0.06 P750k|acq=0.022381378692927483 days=259 NW50=187,375
+buy_hire           fit P750k=0.00 raw=0.00 P500k=0.01 acq=0.02 P750k|acq=0.02622950819672131 days=259 NW50=187,649
+buy_logistics      fit P750k=0.00 raw=0.00 P500k=0.01 acq=0.03 P750k|acq=0.029503105590062112 days=260 NW50=187,923
+buy_ecommerce      fit P750k=0.00 raw=0.00 P500k=0.01 acq=0.08 P750k|acq=0.036275695284159616 days=256 NW50=186,284
+buy_saas           fit P750k=0.00 raw=0.00 P500k=0.01 acq=0.01 P750k|acq=0.011494252873563218 days=261 NW50=186,839
+buy_agency         fit P750k=0.00 raw=0.00 P500k=0.01 acq=0.03 P750k|acq=0.019963702359346643 days=260 NW50=186,441
+build_ecommerce    fit P750k=0.00 raw=0.01 P500k=0.02 acq=1.00 P750k|acq=0.00415 days=303 NW50=188,611
+build_services     fit P750k=0.01 raw=0.01 P500k=0.06 acq=1.00 P750k|acq=0.0098 days=228 NW50=227,779
+hybrid_plan        fit P750k=0.01 raw=0.01 P500k=0.04 acq=0.19 P750k|acq=0.049343832020997375 days=287 NW50=210,601
+hybrid_2blocks_1y  fit P750k=0.02 raw=0.02 P500k=0.08 acq=0.32 P750k|acq=0.07382972038956959 days=304 NW50=225,556
+hybrid_2blocks_2y  fit P750k=0.04 raw=0.03 P500k=0.11 acq=0.40 P750k|acq=0.0846613545816733 days=325 NW50=245,963
+hybrid_3blocks_2y  fit P750k=0.06 raw=0.05 P500k=0.17 acq=0.49 P750k|acq=0.11176530301492234 days=374 NW50=289,656
+build_aws_partner  fit P750k=0.08 raw=0.10 P500k=0.22 acq=1.00 P750k|acq=0.07775 days=202 NW50=285,509
+build_ai_app       fit P750k=0.02 raw=0.09 P500k=0.04 acq=1.00 P750k|acq=0.0192 days=315 NW50=176,183
+hybrid_plan_app    fit P750k=0.04 raw=0.04 P500k=0.11 acq=0.40 P750k|acq=0.10123734533183353 days=327 NW50=241,215
+sweep 0 1 0.008 0.19 288
+sweep 0 2 0.008 0.19 288
+sweep 0 3 0.008 0.19 288
+sweep 1 1 0.013 0.23 285
+sweep 1 2 0.026 0.33 304
+sweep 1 3 0.035 0.39 324
+sweep 2 1 0.015 0.28 284
+sweep 2 2 0.034 0.41 325
+sweep 2 3 0.054 0.5 375
+sweep 3 1 0.015 0.3 285
+sweep 3 2 0.034 0.46 354
+sweep 3 3 0.068 0.55 435
+tornado general.start_investable 0.025 0.068
+tornado routes.hybrid_2blocks_2y.seller_finance_share 0.027 0.04
+tornado routes.hybrid_2blocks_2y.multiple_median 0.103 0.01
+tornado routes.hybrid_2blocks_2y.manager_cost 0.048 0.019
+tornado routes.hybrid_2blocks_2y.p_close_within_12m 0.018 0.042
+tornado general.index_nominal_return_mean 0.02 0.042
+tornado routes.hybrid_2blocks_2y.ebitda_growth_median 0.018 0.059
+tornado routes.hybrid_2blocks_2y.exit_multiple_median 0.032 0.042
+tornado routes.hybrid_2blocks_2y.bank_term_years 0.033 0.031
+tornado general.pg_share_of_facility 0.034 0.029
+tornado routes.hybrid_2blocks_2y.max_search_years 0.023 0.039
+tornado routes.hybrid_2blocks_2y.p_severe_decline_yr1 0.036 0.03
+tornado routes.hybrid_2blocks_2y.p_failure_annual_after_yr1 0.038 0.028
+tornado general.annual_burn 0.047 0.023
+tornado general.dscr_min 0.032 0.033
+tornado routes.hybrid_2blocks_2y.fit_multiplier 0.023 0.04
+tornado general.backstop_p_block_lands 0.032 0.034
+tornado routes.hybrid_2blocks_2y.ev_median 0.021 0.047
+scenario SOT plan as written 0.034 0.41 0.08138677157610032
+scenario Negotiated deal (50% vendor note, 10-yr GGS) 0.037 0.44 0.08238247375627568
+scenario + second line grows EBITDA 8%/yr 0.061 0.44 0.13646736649931537
+scenario + buy at 2.3x (services/logistics pricing) 0.115 0.44 0.2581447963800905
+scenario + £200k start cash 0.17 0.55 0.30417350100236923
+scenario All of the above, no contracting (SOT one-block) 0.148 0.48 0.3046385290430422
+written
+contract_only {'2034': 0.001, '2036': 0.003, '2038': 0.011}
+contract_heavy {'2034': 0.042, '2036': 0.142, '2038': 0.283}
+buy_distributor {'2034': 0.003, '2036': 0.005, '2038': 0.009}
+hybrid_plan {'2034': 0.008, '2036': 0.018, '2038': 0.028}
+hybrid_2blocks_2y {'2034': 0.034, '2036': 0.061, '2038': 0.084}
+hybrid_3blocks_2y {'2034': 0.054, '2036': 0.094, '2038': 0.122}
+hybrid_plan_app {'2034': 0.043, '2036': 0.073, '2038': 0.097}
+build_services {'2034': 0.008, '2036': 0.021, '2038': 0.039}
+build_aws_partner {'2034': 0.076, '2036': 0.104, '2038': 0.135}
+build_ai_app {'2034': 0.02, '2036': 0.026, '2038': 0.031}
+summary written
+FINISHED

@@ -1,0 +1,13 @@
+Smaller deal / more finance variants (cash at completion, model rules):
+  £250k at 2.3x (EBITDA £109k), 65% VN          cash=  80k  bank= 52k  VN=162k  yr1 debt svc= 55k  draw= 34k
+  £250k at 2.3x, 80% VN                         cash=  65k  bank= 30k  VN=200k  yr1 debt svc= 61k  draw= 27k
+  £200k at 2.3x (EBITDA £87k), 65% VN           cash=  68k  bank= 42k  VN=130k  yr1 debt svc= 44k  draw= 23k
+  £300k at 2.3x (EBITDA £130k), 65% VN          cash=  92k  bank= 63k  VN=195k  yr1 debt svc= 66k  draw= 45k
+
+Monte Carlo, 10k paths, origination case, fit 1.10:
+  Lead: EV 385k, 50% VN, contracting 3-2-1-0 while operating             P750=63.6% P500=83.9% deal= 80% yr=2028 draw5=175k
+  Smaller: EV 250k, 65% VN, 2 blocks/yr (~£40k) while operating, then 1  P750=55.8% P500=81.4% deal= 80% yr=2028 draw5=118k
+  Smaller: EV 250k, 65% VN, 2 blocks/yr throughout                       P750=57.4% P500=82.3% deal= 80% yr=2028 draw5=118k
+  Smaller, 80% VN, 2 blocks/yr throughout                                P750=58.4% P500=82.5% deal= 80% yr=2028 draw5=121k
+  Smaller, 65% VN, 2 blocks/yr, search opens 2027 (buy 2028)             P750=58.0% P500=81.0% deal= 80% yr=2027 draw5=119k
+  Smaller, 65% VN, 2 blocks/yr, 25% crypto sleeve                        P750=63.5% P500=85.2% deal= 80% yr=2028 draw5=120k

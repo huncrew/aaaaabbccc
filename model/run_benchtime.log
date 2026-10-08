@@ -1,0 +1,14 @@
+Lead plan (3 days/wk, buy 2029, 10% crypto sleeve) = baseline
+baseline: search opens 2029, P(close)/yr 30%, pay 2.3x           P750=44.4% P500=73.3% deal= 62% yr=2029 P750|deal=60.8% NW50= 692k
+--- bench time spent on deal origination (off-market, retiring owners, lunches, trade shows)
+search opens 2028 (a year of origination while banking)          P750=44.2% P500=72.4% deal= 61% yr=2028 P750|deal=59.8% NW50= 688k
+  + P(close)/yr 50% (more approaches, better pipeline)           P750=51.4% P500=74.3% deal= 79% yr=2028 P750|deal=60.3% NW50= 771k
+  + pay 2.0x (proprietary deal, no broker auction)               P750=55.4% P500=77.1% deal= 79% yr=2028 P750|deal=65.3% NW50= 848k
+  + manager stays 85% (you chose the business for its manager)   P750=57.0% P500=78.3% deal= 79% yr=2028 P750|deal=67.4% NW50= 883k
+  + severe yr-1 decline 6% (real DD, seller retained 12 months)  P750=59.1% P500=79.5% deal= 79% yr=2028 P750|deal=70.0% NW50= 920k
+--- bench time spent on the app instead (cold build, second person, from 2027)
+AI app from 2027 + 3 days/wk contracting, no business            P750=15.0% P500=33.8% deal=100% yr=2027 P750|deal=15.0% NW50= 401k
+AWS consultancy from 2027 (as modelled)                          P750=20.5% P500=61.1% deal=100% yr=2027 P750|deal=20.5% NW50= 552k
+--- bench time spent on the crypto sleeve (only the allocation can change; hours do not change returns)
+baseline with 25% sleeve instead of 10%                          P750=52.7% P500=77.1% deal= 61% yr=2029 P750|deal=64.3% NW50= 782k
+origination case (all of the above) with 25% sleeve              P750=64.4% P500=81.8% deal= 79% yr=2028 P750|deal=73.0% NW50=1029k
