@@ -1,0 +1,18 @@
+build_ecommerce params: {'capital_in': 45000, 'survival_curve': [0.92, 0.69, 0.58, 0.63, 0.79], 'owner_profit_median_by_year': [5000, 15000, 25000, 30000, 35000], 'owner_profit_p90_by_year': [25000, 50000, 75000, 90000, 100000], 'resale_multiple_median': 1.7, 'fit_multiplier': 0.7}
+buy_ecommerce: {'multiple_median': 2.2, 'ev_median': 230000, 'fit_multiplier': 1.0, 'p_manager_stays': 0.5}
+side_option: None
+
+Build ecommerce from zero, 3-day contracting alongside, 10% sleeve:
+  as modelled (fit 0.7)                                                    P750= 5.2% P500=30.7% NW50= 419k
+  fit 1.0 (track record neutralises the weakness)                          P750= 3.3% P500=23.4% NW50= 388k
+  fit 1.2                                                                  P750= 2.9% P500=21.3% NW50= 380k
+  fit 1.2 + owner profit curve x1.5 (proven seller)                        P750= 5.4% P500=29.2% NW50= 412k
+  fit 1.2 + profit x2 + survival 0.9 each yr                               P750=22.8% P500=54.6% NW50= 526k
+
+Buy an ecommerce/marketplace business instead (same origination case as lead plan):
+  lead (electrical servicing, fit 1.10)                                    P750=56.7% P500=81.9% NW50= 830k
+  buy ecommerce at 2.3x, fit 1.10, growth 8%, exit 2.7x                    P750=51.1% P500=77.5% NW50= 763k
+  buy ecommerce, fit 1.2, growth 15% (you add marketing done properly)     P750=63.3% P500=84.0% NW50= 937k
+
+Lead plan + marketplace product line as the side option, stronger odds given track record:
+  side option as modelled                                                  P750=56.7% P500=81.9% NW50= 830k

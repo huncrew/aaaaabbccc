@@ -1,0 +1,99 @@
+HMD242: EBITDA 2020-24 = 181/141/115/129/167k; 5-yr avg £147k; 2022 trough £115k; adj EBITDA already includes directors' replacement cost (verify figure used)
+
+A. As a broker would price it: 3.0x on 2024 EBITDA £167k, 35% VN
+  price £500k = 3.0x £167k | vendor note £175k (4y@5%) | bank £195k (10y@11%) | CASH IN £200k | PG ~£68k | DSCR yr1 2.02
+  yr  EBITDA  debt svc  pre-tax to you  after tax(31%)
+   1    167k      83k          84k            58k
+   2    167k      83k          84k            58k
+   3    167k      83k          84k            58k
+   4    167k      83k          84k            58k
+   5    167k      33k         134k            92k
+   6    167k      33k         134k            92k
+   7    167k      33k         134k            92k
+  7-yr after-tax cash to you £509k on £200k in; business still owned (resale ~2.5x EBITDA ≈ £417k)
+
+B. Negotiated: 2.3x on 5-yr average £146k, 50% VN
+  price £337k = 2.3x £147k | vendor note £168k (4y@5%) | bank £101k (10y@11%) | CASH IN £121k | PG ~£35k | DSCR yr1 2.27
+  yr  EBITDA  debt svc  pre-tax to you  after tax(31%)
+   1    147k      65k          82k            56k
+   2    147k      65k          82k            56k
+   3    147k      65k          82k            56k
+   4    147k      65k          82k            56k
+   5    147k      17k         129k            89k
+   6    147k      17k         129k            89k
+   7    147k      17k         129k            89k
+  7-yr after-tax cash to you £494k on £121k in; business still owned (resale ~2.5x EBITDA ≈ £366k)
+
+C. Seller-funded: 2.3x on 5-yr avg, 70% VN
+  price £337k = 2.3x £147k | vendor note £236k (4y@5%) | bank £61k (10y@11%) | CASH IN £94k | PG ~£21k | DSCR yr1 1.91
+  yr  EBITDA  debt svc  pre-tax to you  after tax(31%)
+   1    147k      77k          70k            48k
+   2    147k      77k          70k            48k
+   3    147k      77k          70k            48k
+   4    147k      77k          70k            48k
+   5    147k      10k         136k            94k
+   6    147k      10k         136k            94k
+   7    147k      10k         136k            94k
+  7-yr after-tax cash to you £474k on £94k in; business still owned (resale ~2.5x EBITDA ≈ £366k)
+
+D. Stress on B: EBITDA drops to 2022 level (£115k) in yrs 1-2, recovers to £146k
+  price £337k = 2.3x £147k | vendor note £168k (4y@5%) | bank £101k (10y@11%) | CASH IN £121k | PG ~£35k | DSCR yr1 2.27
+  yr  EBITDA  debt svc  pre-tax to you  after tax(31%)
+   1    115k      65k          50k            35k
+   2    115k      65k          50k            35k
+   3    147k      65k          82k            56k
+   4    147k      65k          82k            56k
+   5    147k      17k         129k            89k
+   6    147k      17k         129k            89k
+   7    147k      17k         129k            89k
+  7-yr after-tax cash to you £450k on £121k in; business still owned (resale ~2.5x EBITDA ≈ £366k)
+
+E. Stress on B + you hire an ops manager anyway (£40k) because 3 days/wk
+  price £337k = 2.3x £147k | vendor note £168k (4y@5%) | bank £101k (10y@11%) | CASH IN £121k | PG ~£35k | DSCR yr1 1.65
+  yr  EBITDA  debt svc  pre-tax to you  after tax(31%)
+   1    115k      65k          10k             7k
+   2    115k      65k          10k             7k
+   3    147k      65k          42k            29k
+   4    147k      65k          42k            29k
+   5    147k      17k          89k            62k
+   6    147k      17k          89k            62k
+   7    147k      17k          89k            62k
+  7-yr after-tax cash to you £257k on £121k in; business still owned (resale ~2.5x EBITDA ≈ £366k)
+
+--- comparators, negotiated 2.3x, 50% VN ---
+
+P6 London/East: 2.3x on £175k (shareholders stay)
+  price £402k = 2.3x £175k | vendor note £201k (4y@5%) | bank £121k (10y@11%) | CASH IN £141k | PG ~£42k | DSCR yr1 2.27
+  yr  EBITDA  debt svc  pre-tax to you  after tax(31%)
+   1    175k      77k          98k            67k
+   2    175k      77k          98k            67k
+   3    175k      77k          98k            67k
+   4    175k      77k          98k            67k
+   5    175k      21k         154k           107k
+   6    175k      21k         154k           107k
+   7    175k      21k         154k           107k
+  7-yr after-tax cash to you £590k on £141k in; business still owned (resale ~2.5x EBITDA ≈ £438k)
+
+P2 London/SE: 2.3x on £103k adj EBIT (owner likely on tools -> add £45k engineer)
+  price £237k = 2.3x £103k | vendor note £118k (4y@5%) | bank £66k (10y@11%) | CASH IN £96k | PG ~£23k | DSCR yr1 1.30
+  yr  EBITDA  debt svc  pre-tax to you  after tax(31%)
+   1    103k      45k          13k             9k
+   2    103k      45k          13k             9k
+   3    103k      45k          13k             9k
+   4    103k      45k          13k             9k
+   5    103k      11k          47k            32k
+   6    103k      11k          47k            32k
+   7    103k      11k          47k            32k
+  7-yr after-tax cash to you £134k on £96k in; business still owned (resale ~2.5x EBITDA ≈ £258k)
+
+P3 Bucks: 2.3x on £110k adj EBIT (50% margin on £215k T/O = owner IS the electrician; add £50k)
+  price £253k = 2.3x £110k | vendor note £126k (4y@5%) | bank £62k (10y@11%) | CASH IN £110k | PG ~£22k | DSCR yr1 1.30
+  yr  EBITDA  debt svc  pre-tax to you  after tax(31%)
+   1    110k      46k          14k            10k
+   2    110k      46k          14k            10k
+   3    110k      46k          14k            10k
+   4    110k      46k          14k            10k
+   5    110k      10k          50k            34k
+   6    110k      10k          50k            34k
+   7    110k      10k          50k            34k
+  7-yr after-tax cash to you £141k on £110k in; business still owned (resale ~2.5x EBITDA ≈ £275k)
