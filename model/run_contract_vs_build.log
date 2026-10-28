@@ -1,2 +1,29 @@
-/bin/bash: line 60: /tmp/claude-0/-home-user-aaaaabbccc/a0801067-c63e-55a8-9f5e-0cc1f9db97b0/scratchpad/venv/bin/python3: No such file or directory
-/bin/bash: line 62: /tmp/claude-0/-home-user-aaaaabbccc/a0801067-c63e-55a8-9f5e-0cc1f9db97b0/scratchpad/venv/bin/python3: No such file or directory
+A. CONTRACT TO GET CASH, THEN BUY (no ecommerce lanes)
+  A1 4 blocks/yr (full time) for 2 yrs, buy 2029, then 2 blocks/yr while owning P750=63.1% P500=89.8% deal= 80% buy-yr=2029 days≈ 840 NW50= 866k
+  A2 3 blocks/yr for 2 yrs, buy 2029, then 2/yr                                P750=50.8% P500=79.7% deal= 81% buy-yr=2029 days≈ 663 NW50= 757k
+  A3 3 blocks/yr, origination from yr 1, buy 2028, then 2/yr                   P750=52.1% P500=78.6% deal= 80% buy-yr=2028 days≈ 625 NW50= 772k
+  A4 as A3 but bigger firm (EV 385k, 50% VN) and taper 3-2-1-0                 P750=62.4% P500=83.2% deal= 80% buy-yr=2028 days≈ 655 NW50= 946k
+  A5 as A3 but fit 0.95 (you dislike running it)                               P750=48.3% P500=76.8% deal= 73% buy-yr=2028 days≈ 650 NW50= 733k
+
+C. HYBRID: lanes + contracting + buy (lanes modelled as the side_option/probe overlay: £5k test, trade capital £25k if 5 buyers)
+Traceback (most recent call last):
+  File "/home/user/aaaaabbccc/model/run_contract_vs_build.py", line 19, in <module>
+    buy("C1 A3 + lanes at calibrated odds (profit med £25k)", 3, 1, [2,2,1,0], extra={R+"side_option":so})
+  File "/home/user/aaaaabbccc/model/run_contract_vs_build.py", line 8, in buy
+    r=M.simulate(B,p,n=N,overrides=ov); c=r["conditional"]
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/aaaaabbccc/model/mc_model.py", line 308, in simulate
+    st = (t == v(side, "start_year")) & (side_stage == 0) & ((liquid - floor) > v(side, "test_capital"))
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/aaaaabbccc/model/mc_model.py", line 35, in v
+    node = node[k]
+           ~~~~^^^
+KeyError: 'start_year'
+  B1 lanes + 1 block/yr                                                        P750=38.7% P500=75.0% profit2034 p50= 58k P(>=30k)= 79% P(>=80k)= 33% days≈ 360 NW50= 666k
+  B2 lanes + 2 blocks/yr                                                       P750=64.5% P500=93.0% profit2034 p50= 58k P(>=30k)= 79% P(>=80k)= 33% days≈ 720 NW50= 859k
+  B3 lanes + 3 blocks/yr                                                       P750=85.0% P500=98.8% profit2034 p50= 58k P(>=30k)= 79% P(>=80k)= 33% days≈1080 NW50=1056k
+  B4 lanes + 2 blocks/yr, 25% sleeve                                           P750=64.8% P500=90.1% profit2034 p50= 57k NW50= 895k
+C. HYBRID: lanes (as the side-option overlay) + 3 blocks/yr + buy 2028, then 2 blocks/yr
+  C1 A3 + lanes at calibrated odds (profit med £25k, pass 50%)                 P750=52.5% P500=79.0% deal= 80% buy-yr=2028 days≈ 625 NW50= 778k
+  C2 A3 + lanes at Dale-record odds (profit med £40k, pass 65%)                P750=58.4% P500=82.2% deal= 80% buy-yr=2028 days≈ 625 NW50= 851k
+  C3 C2 with 25% sleeve                                                        P750=64.0% P500=85.2% deal= 80% buy-yr=2028 days≈ 625 NW50= 938k
