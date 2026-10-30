@@ -1,0 +1,9 @@
+Lead plan (2.3x, EV 385k, origination) with fit multiplier varied. Fit scales P(close) and divides failure/decline hazards.
+poor fit 0.80 (e.g. people-heavy firm you dislike running)     P750=52.4% P500=78.7% deal= 64% P750|deal=69.1%
+neutral 1.00                                                   P750=59.8% P500=81.8% deal= 75% P750|deal=71.4%
+services baseline 1.05                                         P750=62.6% P500=83.2% deal= 78% P750|deal=73.3%
+distributor baseline 1.10                                      P750=63.6% P500=83.9% deal= 80% P750|deal=73.6%
+strong fit 1.20 (systematic, data-led, manager-run)            P750=66.6% P500=84.7% deal= 84% P750|deal=74.6%
+--- same, but fit also changes what you do with hours: poor fit = you take 1 fewer contracting block/yr while operating (burnout), strong fit = growth 10% not 8%
+poor fit + fewer blocks                                        P750=50.0%
+strong fit + 10% growth                                        P750=68.9%
