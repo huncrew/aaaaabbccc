@@ -1,0 +1,122 @@
+{
+  "products": [
+    {
+      "sku": "CUSTOM_MAP-PRINT_8X10",
+      "property_values": [
+        {
+          "property_name": "Size / Finish",
+          "values": [
+            "8x10 in print, unframed"
+          ]
+        }
+      ],
+      "offerings": [
+        {
+          "price": 29.95,
+          "quantity": 999,
+          "is_enabled": true
+        }
+      ],
+      "_partner": "Lumaprints (Anaheim CA)",
+      "_partner_cost_usd": 10.19,
+      "_gross_profit_usd": 13.92,
+      "_gross_margin": 0.465
+    },
+    {
+      "sku": "CUSTOM_MAP-PRINT_12X16",
+      "property_values": [
+        {
+          "property_name": "Size / Finish",
+          "values": [
+            "12x16 in print, unframed"
+          ]
+        }
+      ],
+      "offerings": [
+        {
+          "price": 37.95,
+          "quantity": 999,
+          "is_enabled": true
+        }
+      ],
+      "_partner": "Lumaprints (Anaheim CA)",
+      "_partner_cost_usd": 13.5,
+      "_gross_profit_usd": 17.57,
+      "_gross_margin": 0.463
+    },
+    {
+      "sku": "CUSTOM_MAP-PRINT_18X24",
+      "property_values": [
+        {
+          "property_name": "Size / Finish",
+          "values": [
+            "18x24 in print, unframed"
+          ]
+        }
+      ],
+      "offerings": [
+        {
+          "price": 44.95,
+          "quantity": 999,
+          "is_enabled": true
+        }
+      ],
+      "_partner": "Printful (US)",
+      "_partner_cost_usd": 18.14,
+      "_gross_profit_usd": 19.02,
+      "_gross_margin": 0.423
+    },
+    {
+      "sku": "CUSTOM_MAP-CANVAS_16X20",
+      "property_values": [
+        {
+          "property_name": "Size / Finish",
+          "values": [
+            "16x20 in gallery canvas"
+          ]
+        }
+      ],
+      "offerings": [
+        {
+          "price": 89.95,
+          "quantity": 999,
+          "is_enabled": true
+        }
+      ],
+      "_partner": "Lumaprints (Anaheim CA)",
+      "_partner_cost_usd": 36.34,
+      "_gross_profit_usd": 39.97,
+      "_gross_margin": 0.444
+    },
+    {
+      "sku": "CUSTOM_MAP-FRAMED_16X20",
+      "property_values": [
+        {
+          "property_name": "Size / Finish",
+          "values": [
+            "16x20 in framed, black"
+          ]
+        }
+      ],
+      "offerings": [
+        {
+          "price": 119.0,
+          "quantity": 999,
+          "is_enabled": true
+        }
+      ],
+      "_partner": "Lumaprints (Anaheim CA)",
+      "_partner_cost_usd": 49.61,
+      "_gross_profit_usd": 51.97,
+      "_gross_margin": 0.437
+    }
+  ],
+  "price_on_property": [
+    513
+  ],
+  "quantity_on_property": [],
+  "sku_on_property": [
+    513
+  ],
+  "_note": "property id 513 = Size placeholder; use the shop's custom property id from getListingInventory"
+}

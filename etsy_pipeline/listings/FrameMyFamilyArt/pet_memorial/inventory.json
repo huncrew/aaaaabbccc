@@ -1,0 +1,122 @@
+{
+  "products": [
+    {
+      "sku": "PET_MEMORIAL-PRINT_8X10",
+      "property_values": [
+        {
+          "property_name": "Size / Finish",
+          "values": [
+            "8x10 in print, unframed"
+          ]
+        }
+      ],
+      "offerings": [
+        {
+          "price": 28.95,
+          "quantity": 999,
+          "is_enabled": true
+        }
+      ],
+      "_partner": "Lumaprints (Anaheim CA)",
+      "_partner_cost_usd": 10.19,
+      "_gross_profit_usd": 13.05,
+      "_gross_margin": 0.451
+    },
+    {
+      "sku": "PET_MEMORIAL-PRINT_12X16",
+      "property_values": [
+        {
+          "property_name": "Size / Finish",
+          "values": [
+            "12x16 in print, unframed"
+          ]
+        }
+      ],
+      "offerings": [
+        {
+          "price": 36.95,
+          "quantity": 999,
+          "is_enabled": true
+        }
+      ],
+      "_partner": "Lumaprints (Anaheim CA)",
+      "_partner_cost_usd": 13.5,
+      "_gross_profit_usd": 16.7,
+      "_gross_margin": 0.452
+    },
+    {
+      "sku": "PET_MEMORIAL-PRINT_18X24",
+      "property_values": [
+        {
+          "property_name": "Size / Finish",
+          "values": [
+            "18x24 in print, unframed"
+          ]
+        }
+      ],
+      "offerings": [
+        {
+          "price": 43.95,
+          "quantity": 999,
+          "is_enabled": true
+        }
+      ],
+      "_partner": "Printful (US)",
+      "_partner_cost_usd": 18.14,
+      "_gross_profit_usd": 18.15,
+      "_gross_margin": 0.413
+    },
+    {
+      "sku": "PET_MEMORIAL-CANVAS_16X20",
+      "property_values": [
+        {
+          "property_name": "Size / Finish",
+          "values": [
+            "16x20 in gallery canvas"
+          ]
+        }
+      ],
+      "offerings": [
+        {
+          "price": 89.95,
+          "quantity": 999,
+          "is_enabled": true
+        }
+      ],
+      "_partner": "Lumaprints (Anaheim CA)",
+      "_partner_cost_usd": 36.34,
+      "_gross_profit_usd": 39.97,
+      "_gross_margin": 0.444
+    },
+    {
+      "sku": "PET_MEMORIAL-FRAMED_16X20",
+      "property_values": [
+        {
+          "property_name": "Size / Finish",
+          "values": [
+            "16x20 in framed, black"
+          ]
+        }
+      ],
+      "offerings": [
+        {
+          "price": 119.0,
+          "quantity": 999,
+          "is_enabled": true
+        }
+      ],
+      "_partner": "Lumaprints (Anaheim CA)",
+      "_partner_cost_usd": 49.61,
+      "_gross_profit_usd": 51.97,
+      "_gross_margin": 0.437
+    }
+  ],
+  "price_on_property": [
+    513
+  ],
+  "quantity_on_property": [],
+  "sku_on_property": [
+    513
+  ],
+  "_note": "property id 513 = Size placeholder; use the shop's custom property id from getListingInventory"
+}
