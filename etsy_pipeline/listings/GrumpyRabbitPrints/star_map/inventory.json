@@ -12,15 +12,15 @@
       ],
       "offerings": [
         {
-          "price": 12.13,
+          "price": 11.95,
           "quantity": 999,
           "is_enabled": true
         }
       ],
       "_partner": "none (instant download)",
       "_partner_cost_usd": 0.0,
-      "_gross_profit_usd": 8.6,
-      "_gross_margin": 0.709
+      "_gross_profit_usd": 8.45,
+      "_gross_margin": 0.707
     },
     {
       "sku": "STAR_MAP-PRINT_8X10",

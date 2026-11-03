@@ -4,7 +4,7 @@
 ## Price ladder
 | Format | Price | Partner | Partner cost | Gross profit | Margin |
 |---|---|---|---|---|---|
-| Digital file, instant download (print at home or any lab) | $13.48 | none (instant download) | $0.00 | $9.78 | 72% |
+| Digital file, instant download (print at home or any lab) | $12.95 | none (instant download) | $0.00 | $9.32 | 72% |
 | 8x10 in print, unframed | $29.95 | Lumaprints (Anaheim CA) | $10.19 | $13.92 | 46% |
 | 12x16 in print, unframed | $37.95 | Lumaprints (Anaheim CA) | $13.50 | $17.57 | 46% |
 | 18x24 in print, unframed | $44.95 | Printful (US) | $18.14 | $19.02 | 42% |

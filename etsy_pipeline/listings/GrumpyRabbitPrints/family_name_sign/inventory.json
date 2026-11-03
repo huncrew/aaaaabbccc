@@ -12,15 +12,15 @@
       ],
       "offerings": [
         {
-          "price": 21.58,
+          "price": 21.95,
           "quantity": 999,
           "is_enabled": true
         }
       ],
       "_partner": "none (instant download)",
       "_partner_cost_usd": 0.0,
-      "_gross_profit_usd": 16.82,
-      "_gross_margin": 0.78
+      "_gross_profit_usd": 17.15,
+      "_gross_margin": 0.781
     },
     {
       "sku": "FAMILY_NAME_SIGN-PRINT_8X10",

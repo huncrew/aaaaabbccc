@@ -13,7 +13,7 @@ LADDER = {  # format -> (variation label, price USD, partner, partner cost incl.
 }
 def ladder(entry):  # entry price at the market median (rounded to .95, floor 22.95); 12x16 = entry + 8
     e = max(22.95, round(entry) - 0.05)
-    return {"digital": round(max(9.95, e*0.45) - 0.0, 2) if True else None, "print_8x10": e, "print_12x16": round(e + 8, 2), "print_18x24": max(39.95, round(e + 15, 2)),
+    return {"digital": max(9.95, round(e*0.45) - 0.05), "print_8x10": e, "print_12x16": round(e + 8, 2), "print_18x24": max(39.95, round(e + 15, 2)),
             "canvas_16x20": 89.95, "framed_16x20": 119.00}
 
 COMMON_DESC = """{hook}

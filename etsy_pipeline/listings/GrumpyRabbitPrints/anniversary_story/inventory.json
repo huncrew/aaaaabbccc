@@ -12,15 +12,15 @@
       ],
       "offerings": [
         {
-          "price": 10.78,
+          "price": 10.95,
           "quantity": 999,
           "is_enabled": true
         }
       ],
       "_partner": "none (instant download)",
       "_partner_cost_usd": 0.0,
-      "_gross_profit_usd": 7.43,
-      "_gross_margin": 0.689
+      "_gross_profit_usd": 7.58,
+      "_gross_margin": 0.692
     },
     {
       "sku": "ANNIVERSARY_STORY-PRINT_8X10",
