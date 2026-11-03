@@ -1,6 +1,28 @@
 {
   "products": [
     {
+      "sku": "CUSTOM_MAP-DIGITAL",
+      "property_values": [
+        {
+          "property_name": "Size / Finish",
+          "values": [
+            "Digital file, instant download (print at home or any lab)"
+          ]
+        }
+      ],
+      "offerings": [
+        {
+          "price": 13.48,
+          "quantity": 999,
+          "is_enabled": true
+        }
+      ],
+      "_partner": "none (instant download)",
+      "_partner_cost_usd": 0.0,
+      "_gross_profit_usd": 9.78,
+      "_gross_margin": 0.725
+    },
+    {
       "sku": "CUSTOM_MAP-PRINT_8X10",
       "property_values": [
         {

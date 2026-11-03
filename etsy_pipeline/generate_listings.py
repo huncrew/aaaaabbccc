@@ -1,7 +1,7 @@
 """Generate listing skeletons (Etsy API v3 payload shapes + human-readable MD) for every line in catalogue.py.
 Usage: python3 generate_listings.py  -> writes listings/<shop>/<slug>/{listing.json,inventory.json,listing.md} and listings/master.csv"""
 import json, csv, os, re
-from catalogue import SHOPS, LADDER, ladder, COMMON_DESC
+from catalogue import SHOPS, LADDER, ladder, COMMON_DESC, DIGITAL_LINES
 OUT = os.path.join(os.path.dirname(__file__), "listings"); os.makedirs(OUT, exist_ok=True)
 FEE_RATE, FEE_FIXED, LABOUR = 0.13, 0.45, 1.50   # UK/GBP-paid Etsy seller approx (6.5%+3%+~3.5pt) ; $0.25+$0.20 ; design labour/order
 rows = []
@@ -15,12 +15,13 @@ for shop, s in SHOPS.items():
         prices = ladder(line["entry"])
         products = []
         for fmt, (label, _, partner, cost) in LADDER.items():
+            if fmt == "digital" and line["slug"] not in DIGITAL_LINES: continue
             price = prices[fmt]
             gp = price - cost - (FEE_RATE*price + FEE_FIXED) - LABOUR
             products.append({"sku": f"{line['slug'].upper()}-{fmt.upper()}", "property_values": [{"property_name": "Size / Finish", "values": [label]}],
                              "offerings": [{"price": price, "quantity": 999, "is_enabled": True}], "_partner": partner, "_partner_cost_usd": cost, "_gross_profit_usd": round(gp,2), "_gross_margin": round(gp/price,3)})
         desc = COMMON_DESC.format(hook=line["hook"], fields=line["fields"], details=line["details"])
-        listing = {"title": line["title"], "description": desc, "price": prices["print_8x10"], "quantity": 999, "who_made": "i_did", "when_made": "made_to_order",
+        listing = {"title": line["title"], "description": desc, "price": prices["digital"] if line["slug"] in DIGITAL_LINES else prices["print_8x10"], "quantity": 999, "who_made": "i_did", "when_made": "made_to_order",
                    "taxonomy_id": "<SET: Etsy taxonomy id for Art & Collectibles > Prints > Digital/Giclée Prints>", "tags": line["tags"], "materials": ["archival matte paper", "canvas", "wood frame"],
                    "shipping_profile_id": "<SET: US free-shipping-over-35 profile>", "return_policy_id": "<SET>", "processing_min": 3, "processing_max": 7, "type": "physical",
                    "is_personalizable": True, "personalization_is_required": True, "personalization_char_count_max": 256, "personalization_instructions": line["personalization"],

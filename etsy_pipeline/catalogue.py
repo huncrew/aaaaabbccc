@@ -2,7 +2,9 @@
 research_notes/.../laneA_personalised_candidates.csv (RankHero, Oct 2026); partners/costs from laneA_us_production_partners.csv.
 Etsy rules applied: title <= 15 words / 140 chars, noun first; 13 tags <= 20 chars each; personalisation on; partner disclosed."""
 
+DIGITAL_LINES = {"star_map","custom_map","housewarming_map","anniversary_story","wedding_print","family_name_sign","birth_flower_bouquet","nursery_stats","baptism_print","retirement_print"}
 LADDER = {  # format -> (variation label, price USD, partner, partner cost incl. US ship USD)
+    "digital":      ("Digital file, instant download (print at home or any lab)", None, "none (instant download)", 0.00),
     "print_8x10":   ("8x10 in print, unframed",  None,   "Lumaprints (Anaheim CA)",  10.19),
     "print_12x16":  ("12x16 in print, unframed", None,   "Lumaprints (Anaheim CA)",  13.50),
     "print_18x24":  ("18x24 in print, unframed", 39.95,  "Printful (US)",            18.14),
@@ -11,7 +13,7 @@ LADDER = {  # format -> (variation label, price USD, partner, partner cost incl.
 }
 def ladder(entry):  # entry price at the market median (rounded to .95, floor 22.95); 12x16 = entry + 8
     e = max(22.95, round(entry) - 0.05)
-    return {"print_8x10": e, "print_12x16": round(e + 8, 2), "print_18x24": max(39.95, round(e + 15, 2)),
+    return {"digital": round(max(9.95, e*0.45) - 0.0, 2) if True else None, "print_8x10": e, "print_12x16": round(e + 8, 2), "print_18x24": max(39.95, round(e + 15, 2)),
             "canvas_16x20": 89.95, "framed_16x20": 119.00}
 
 COMMON_DESC = """{hook}
