@@ -1,0 +1,336 @@
+<title>Path to 750k by 40</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f7f6f2;--surface:#fdfdfb;--ink:#161613;--ink2:#52514e;--muted:#898781;--grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s7:#4a3aa7;--s8:#e34948;
+  --good:#0ca30c;--warn:#fab219;--serious:#ec835a;--critical:#d03b3b;--goodtext:#006300;
+  --accent:#1c5cab;--accent-soft:#e3edfa;--floor:#898781;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111110;--surface:#1a1a19;--ink:#f4f4ef;--ink2:#c3c2b7;--muted:#898781;--grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s7:#9085e9;--s8:#e66767;--goodtext:#0ca30c;--accent:#86b6ef;--accent-soft:#1d2a3d;color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#111110;--surface:#1a1a19;--ink:#f4f4ef;--ink2:#c3c2b7;--muted:#898781;--grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s7:#9085e9;--s8:#e66767;--goodtext:#0ca30c;--accent:#86b6ef;--accent-soft:#1d2a3d;color-scheme:dark;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.5}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 64px;padding-inline:16px}
+h1,h2,h3{font-family:"Source Serif 4",Georgia,serif;text-wrap:balance;margin:0}
+h1{font-size:2.1rem;font-weight:600;line-height:1.15}
+h2{font-size:1.45rem;font-weight:600;margin-top:44px;margin-bottom:6px}
+h3{font-size:1.05rem;font-weight:600;margin-top:18px}
+p{max-width:68ch;margin:8px 0}
+.eyebrow{font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.lede{font-size:1.06rem;color:var(--ink2);max-width:70ch}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:22px 0 8px}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.tile .v{font-size:2rem;font-weight:600;line-height:1.1;margin:4px 0}
+.tile .l{font-size:.8rem;color:var(--ink2)}
+.tile .s{font-size:.78rem;color:var(--muted);margin-top:6px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px;margin-top:14px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 0 6px;font-size:.88rem}
+select,button{font:inherit;font-size:.88rem;padding:6px 10px;border:1px solid var(--axis);border-radius:6px;background:var(--surface);color:var(--ink)}
+button{cursor:pointer}button:hover{border-color:var(--accent)}button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.on{background:var(--accent-soft);border-color:var(--accent)}
+svg{max-width:100%;height:auto;display:block}
+svg text{font-family:"IBM Plex Sans",system-ui,sans-serif;fill:var(--ink2)}
+.tabnum{font-variant-numeric:tabular-nums}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--grid);vertical-align:top}
+th{font-weight:600;color:var(--ink2);font-size:.78rem;letter-spacing:.03em;text-transform:uppercase}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.tablewrap{overflow-x:auto;margin-top:8px}
+.chip{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.74rem;font-weight:600;letter-spacing:.02em}
+.chip.good{background:rgba(12,163,12,.14);color:var(--goodtext)}
+.chip.warn{background:rgba(250,178,25,.2);color:#7a5200}
+.chip.bad{background:rgba(208,59,59,.14);color:var(--critical)}
+.chip.neutral{background:var(--accent-soft);color:var(--accent)}
+:root[data-theme="dark"] .chip.warn{color:#fab219}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip.warn{color:#fab219}}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--ink2);margin:6px 0}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-2px;background:var(--c)}
+.note{font-size:.82rem;color:var(--muted);max-width:80ch}
+.callout{border-left:3px solid var(--accent);padding:6px 14px;margin:14px 0;background:var(--accent-soft);border-radius:0 6px 6px 0;max-width:80ch}
+.callout p{margin:4px 0}
+ol.decisions li{margin:8px 0;max-width:78ch}
+.tooltip{position:fixed;pointer-events:none;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 9px;font-size:.8rem;box-shadow:0 4px 14px rgba(0,0,0,.12);display:none;z-index:9;max-width:280px}
+a{color:var(--accent)}
+.small{font-size:.84rem}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Decision analysis · 28 September 2026 · 20,000 simulated paths per route</div>
+  <h1>Path to £750k by 40</h1>
+  <p class="lede">Every route Dale could take from end-2026 to end-2034, scored on one question: the probability of £750k invested by 40 with the £120k floor never touched. Numbers come from 13 research notes (live UK listings, deal multiples, finance terms, base rates, health and personality evidence) feeding a Monte Carlo model. Everything here can be traced to a source or a parameter in the audit trail.</p>
+
+  <div class="tiles" id="tiles"></div>
+  <div class="callout" id="headline"></div>
+
+  <h2>1. Routes ranked by probability</h2>
+  <p>Bars show P(net worth ≥ £750k at end-2034). The solid bar applies the personality and health fit multipliers; the outlined bar is the raw base rate with no fit adjustment. The tick marks P(≥ £500k), the SOT's LeanFIRE layer.</p>
+  <div class="controls"><label>Sort by <select id="sortSel"><option value="fit">fit-adjusted P(£750k)</option><option value="p500">P(£500k)</option><option value="nw50">median net worth</option><option value="days">employed days (fewest first)</option></select></label>
+  <button id="tblBtn1" type="button">Table view</button></div>
+  <div class="legend"><span style="--c:var(--s1)">fit-adjusted P(£750k)</span><span style="--c:transparent;outline:2px solid var(--s1);outline-offset:-2px">raw P(£750k)</span><span style="--c:var(--s3)">P(£500k) tick</span></div>
+  <div class="card" id="routeChart"></div>
+  <div class="tablewrap" id="routeTable" hidden></div>
+
+  <h2>2. Where the money ends up</h2>
+  <p>Net worth fan (10th to 90th percentile, median in bold) for a chosen route. Dashed lines: the £750k goal, £500k, and the £120k floor.</p>
+  <div class="controls"><label>Route <select id="fanSel"></select></label><span class="small" id="fanStats"></span></div>
+  <div class="card" id="fanChart"></div>
+
+  <h2>3. Why the acquisition does not get there on its own</h2>
+  <p>The model closes the deal Dale can actually afford, not the one in the plan. With cash above the floor of roughly £30k in 2027 (or £80–120k after two years of heavier contracting), the affordable business is smaller than the £300–450k envelope, and at 2.8× with three-quarters debt the owner's draw is close to zero until the vendor note is repaid.</p>
+  <div class="grid2">
+    <div class="card"><div class="eyebrow">The deal the cash allows (median, when a deal closes)</div><div id="dealAnatomy"></div></div>
+    <div class="card"><div class="eyebrow">Median owner draw by year held, after manager cover and debt service</div><div id="drawChart"></div></div>
+  </div>
+
+  <h2>4. How much labour first?</h2>
+  <p>The SOT plan (one block, search immediately) closes a deal about one time in five. Each cell is P(£750k by 2034) for a given number of contracting years before the search opens and blocks (13-week contracts) per year in those years. Employed days over the whole eight years are shown underneath; the SOT says one block a year is what health sustains.</p>
+  <div class="card" id="sweepChart"></div>
+
+  <h2>5. What has to be true</h2>
+  <p>Cumulative scenarios on the two-years-of-two-blocks plan. Each bar adds one negotiated or achieved condition to the ones above it.</p>
+  <div class="card" id="scenarioChart"></div>
+
+  <h2>6. Which inputs move the answer</h2>
+  <p>P(£750k) on the same plan when one input is set to its evidence range low or high, everything else at base. Longer bars matter more.</p>
+  <div class="card" id="tornadoChart"></div>
+
+  <h2>7. If 40 becomes 42 or 44</h2>
+  <p>The same routes with the horizon extended. The floor rule and the burn stay the same.</p>
+  <div class="card" id="horizonChart"></div>
+
+  <h2>8. Read against the person</h2>
+  <p>How each route sits against the measured profile: Shaper, Demanding 96%, Non-Conforming 96%, Detail-Oriented 15%, Empathetic 1%; least like Implementer; Crohn's with energy as the binding constraint; two profitable businesses in the selling seat, 0 of 6 solo builds finished. The fit multiplier is the coordinator's evidence-based setting; the raw bars in section 1 show what happens without it.</p>
+  <div class="tablewrap" id="fitTable"></div>
+
+  <h2>9. What is actually for sale, and what building costs</h2>
+  <p>Live UK listings scanned on 28 September 2026 (priced £150–600k, non-franchise, owner-operator-only excluded), with build-from-zero measured on the same axes from ONS and HMRC data.</p>
+  <div class="tablewrap" id="marketTable"></div>
+
+  <h2>10. Decisions this changes</h2>
+  <ol class="decisions" id="decisions"></ol>
+
+  <h2>11. Method, audit trail and limits</h2>
+  <div class="card small" id="method"></div>
+</div>
+<div class="tooltip" id="tt"></div>
+
+<script>
+const DATA = /*DATA*/{}/*END*/;
+const LABEL = {contract_only:"Contract: one block a year (SOT coast)",contract_heavy:"Contract: three blocks a year",buy_distributor:"Buy: importer / distributor",buy_services:"Buy: contracted B2B services",buy_hire:"Buy: plant / equipment hire",buy_logistics:"Buy: courier / 3PL",buy_ecommerce:"Buy: multi-channel ecommerce",buy_saas:"Buy: small SaaS",buy_agency:"Buy: agency / MSP (control)",build_ecommerce:"Build: multi-channel ecommerce",build_services:"Build: B2B services",build_aws_partner:"Build: AWS / AI consultancy",build_ai_app:"Build: AI app with a second person",hybrid_plan:"SOT plan: one block, buy 2027",hybrid_2blocks_1y:"Two blocks in 2027, then buy",hybrid_2blocks_2y:"Two blocks a year × 2, then buy",hybrid_3blocks_2y:"Three blocks a year × 2, then buy",hybrid_plan_app:"Two blocks × 2, buy, then app for owned customers"};
+const gbp = v => "£" + Math.round(v).toLocaleString("en-GB");
+const gbpk = v => v >= 1e6 ? "£" + (v/1e6).toFixed(2) + "m" : "£" + Math.round(v/1000) + "k";
+const pc = v => (v*100).toFixed(v < 0.1 ? 1 : 0) + "%";
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const tt = document.getElementById("tt");
+function hover(el, html){ el.addEventListener("mousemove", e => { tt.innerHTML = html; tt.style.display = "block"; tt.style.left = Math.min(e.clientX + 12, window.innerWidth - 300) + "px"; tt.style.top = (e.clientY + 12) + "px"; }); el.addEventListener("mouseleave", () => tt.style.display = "none"); el.setAttribute("tabindex","0"); el.addEventListener("focus", e => { tt.innerHTML = html; tt.style.display = "block"; const r = el.getBoundingClientRect(); tt.style.left = r.left + "px"; tt.style.top = (r.bottom + 6) + "px"; }); el.addEventListener("blur", () => tt.style.display = "none"); }
+const NS = "http://www.w3.org/2000/svg";
+function svgEl(tag, attrs, parent){ const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function text(parent, x, y, s, attrs={}){ const t = svgEl("text", Object.assign({x, y, "font-size": 12}, attrs), parent); t.textContent = s; return t; }
+
+const R = DATA.routes_fit, RAW = DATA.routes_raw;
+const routes = Object.keys(R);
+
+// ---------- tiles + headline ----------
+(function(){
+  const best = routes.filter(r => !r.startsWith("contract")).sort((a,b) => R[b].p_target_by_2034 - R[a].p_target_by_2034)[0];
+  const sot = R.hybrid_plan, plan2 = R.hybrid_2blocks_2y;
+  const c = plan2.conditional;
+  const tiles = [
+    {l:"SOT plan as written: P(£750k by 2034)", v:pc(sot.p_target_by_2034), s:`deal closes ${pc(sot.p_business_acquired)} of the time · P(£500k) ${pc(sot.p_500k_by_2034)}`},
+    {l:"Best business route: P(£750k by 2034)", v:pc(R[best].p_target_by_2034), s:LABEL[best]},
+    {l:"The deal the cash allows (median EV)", v:gbpk(c.median_ev_closed), s:`EBITDA ${gbpk(c.median_ebitda_at_close)} · cash in ${gbpk(c.median_cash_in_deal)} · closes ${c.median_acquisition_year}`},
+    {l:"P(£750k) if the deal closes and survives", v:pc(c.p_target_given_acquired), s:"two blocks a year × 2, then buy; P(£500k given deal) " + pc(c.p_500k_given_acquired)},
+  ];
+  document.getElementById("tiles").innerHTML = tiles.map(t => `<div class="tile"><div class="l">${t.l}</div><div class="v">${t.v}</div><div class="s">${t.s}</div></div>`).join("");
+  const sc = DATA.scenarios; const keys = Object.keys(sc); const last = sc[keys[keys.length-2]];
+  document.getElementById("headline").innerHTML = `<p><strong>Headline.</strong> On the evidence, no route reaches £750k by end-2034 with better than about one chance in ten, and the plan as written sits near ${pc(sot.p_target_by_2034)}. The reason is arithmetic, not sector choice: cash above the floor is ~£30k in 2027 against the ~£110–130k a £300k deal needs, one 13-week block nets ~£23k against a £20k burn, and a business bought at 2.8× with three-quarters debt pays its owner almost nothing until the vendor note clears.</p><p>With a negotiated deal (50% vendor note, 10-year GGS term), a second line growing EBITDA 8% a year, services-style pricing at 2.3× and £200k of start cash, the same plan reaches ${pc(last.p750)} for £750k and ${pc(last.p500)} for £500k. Reaching £500k by 40, then £750k by 42–44, is the shape the data supports.</p>`;
+})();
+
+// ---------- route chart ----------
+function drawRoutes(){
+  const sort = document.getElementById("sortSel").value;
+  const key = {fit:r => R[r].p_target_by_2034, p500:r => R[r].p_500k_by_2034, nw50:r => R[r].nw_percentiles_2034["50"], days:r => -R[r].mean_employed_days_total}[sort];
+  const order = routes.slice().sort((a,b) => key(b) - key(a));
+  const W = 1000, rowH = 30, left = 330, right = 60, H = order.length * rowH + 40;
+  const box = document.getElementById("routeChart"); box.innerHTML = "";
+  const svg = svgEl("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", "aria-label":"Probability of reaching £750k by 2034 by route"}, box);
+  const maxP = 0.35, x = p => left + (Math.min(p, maxP)/maxP) * (W - left - right);
+  for (let g = 0; g <= maxP + 1e-9; g += 0.05){ svgEl("line", {x1:x(g), x2:x(g), y1:18, y2:H-22, stroke:css("--grid")}, svg); text(svg, x(g), H-8, pc(g), {"text-anchor":"middle", "font-size":11, fill:css("--muted")}); }
+  order.forEach((r, i) => {
+    const y = 24 + i*rowH; const fit = R[r].p_target_by_2034, raw = RAW[r].p_target_by_2034, p5 = R[r].p_500k_by_2034;
+    text(svg, left - 10, y + 15, LABEL[r], {"text-anchor":"end", "font-size":12.5, fill:css("--ink")});
+    const g = svgEl("g", {}, svg);
+    svgEl("rect", {x:x(0), y:y+3, width:Math.max(x(raw)-x(0), 1), height:20, fill:"none", stroke:css("--s1"), "stroke-width":1.5, rx:3}, g);
+    svgEl("rect", {x:x(0), y:y+6, width:Math.max(x(fit)-x(0), 2), height:14, fill:css("--s1"), rx:3}, g);
+    svgEl("line", {x1:x(p5), x2:x(p5), y1:y+1, y2:y+25, stroke:css("--s3"), "stroke-width":2.5}, g);
+    text(svg, x(Math.max(fit, raw)) + 6, y + 17, pc(fit), {"font-size":11.5, fill:css("--ink")});
+    svgEl("rect", {x:0, y, width:W, height:rowH, fill:"transparent"}, g);
+    hover(g, `<b>${LABEL[r]}</b><br>P(£750k) fit ${pc(fit)} · raw ${pc(raw)}<br>P(£500k) ${pc(p5)} · median NW 2034 ${gbpk(R[r].nw_percentiles_2034["50"])}<br>employed days 2027–34 ≈ ${Math.round(R[r].mean_employed_days_total)} · floor breached ${pc(R[r].p_floor_breached)}`);
+  });
+  const tbl = document.getElementById("routeTable");
+  tbl.innerHTML = `<table><thead><tr><th>Route</th><th class="n">P(£750k) fit</th><th class="n">raw</th><th class="n">P(£500k)</th><th class="n">P(deal)</th><th class="n">P(£750k | deal)</th><th class="n">NW p10</th><th class="n">NW p50</th><th class="n">NW p90</th><th class="n">floor breached</th><th class="n">employed days</th><th class="n">hrs/wk yr1→yr8</th></tr></thead><tbody>` +
+    order.map(r => { const c = R[r].conditional; return `<tr><td>${LABEL[r]}</td><td class="n">${pc(R[r].p_target_by_2034)}</td><td class="n">${pc(RAW[r].p_target_by_2034)}</td><td class="n">${pc(R[r].p_500k_by_2034)}</td><td class="n">${R[r].kind==="buy"||R[r].kind==="hybrid"?pc(R[r].p_business_acquired):"—"}</td><td class="n">${c.p_target_given_acquired==null?"—":pc(c.p_target_given_acquired)}</td><td class="n">${gbpk(R[r].nw_percentiles_2034["10"])}</td><td class="n">${gbpk(R[r].nw_percentiles_2034["50"])}</td><td class="n">${gbpk(R[r].nw_percentiles_2034["90"])}</td><td class="n">${pc(R[r].p_floor_breached)}</td><td class="n">${Math.round(R[r].mean_employed_days_total)}</td><td class="n">${R[r].mean_hours_by_year.map(h=>Math.round(h)).join(" ")}</td></tr>`; }).join("") + "</tbody></table>";
+}
+document.getElementById("sortSel").addEventListener("change", drawRoutes);
+document.getElementById("tblBtn1").addEventListener("click", e => { const t = document.getElementById("routeTable"); t.hidden = !t.hidden; e.target.classList.toggle("on", !t.hidden); e.target.textContent = t.hidden ? "Table view" : "Hide table"; });
+drawRoutes();
+
+// ---------- fan chart ----------
+(function(){
+  const sel = document.getElementById("fanSel");
+  routes.forEach(r => { const o = document.createElement("option"); o.value = r; o.textContent = LABEL[r]; sel.appendChild(o); });
+  sel.value = "hybrid_2blocks_2y";
+  function draw(){
+    const r = sel.value, f = R[r].fan, yrs = R[r].years;
+    const W = 1000, H = 360, left = 70, right = 30, top = 20, bottom = 40;
+    const box = document.getElementById("fanChart"); box.innerHTML = "";
+    const svg = svgEl("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", "aria-label":"Net worth fan chart"}, box);
+    const maxY = Math.max(900000, ...f["90"]) * 1.05;
+    const x = i => left + i * (W - left - right) / (yrs.length - 1), y = v => top + (1 - v/maxY) * (H - top - bottom);
+    for (let g = 0; g <= maxY; g += 150000){ svgEl("line", {x1:left, x2:W-right, y1:y(g), y2:y(g), stroke:css("--grid")}, svg); text(svg, left-8, y(g)+4, gbpk(g), {"text-anchor":"end", "font-size":11, fill:css("--muted")}); }
+    yrs.forEach((yr, i) => text(svg, x(i), H-14, yr, {"text-anchor":"middle", "font-size":11.5, fill:css("--muted")}));
+    const area = (lo, hi, op) => { const d = lo.map((v,i) => `${i?"L":"M"}${x(i)},${y(v)}`).join(" ") + hi.map((v,i) => `L${x(hi.length-1-i)},${y(hi[hi.length-1-i])}`).join(" ") + "Z"; svgEl("path", {d, fill:css("--s1"), opacity:op}, svg); };
+    area(f["10"], f["90"], 0.14); area(f["25"], f["75"], 0.22);
+    svgEl("path", {d:f["50"].map((v,i) => `${i?"L":"M"}${x(i)},${y(v)}`).join(" "), fill:"none", stroke:css("--s1"), "stroke-width":2.5}, svg);
+    [[750000,"£750k goal"],[500000,"£500k"],[120000,"£120k floor"]].forEach(([v,l]) => { svgEl("line", {x1:left, x2:W-right, y1:y(v), y2:y(v), stroke:css("--floor"), "stroke-dasharray":"5 4"}, svg); text(svg, W-right-4, y(v)-5, l, {"text-anchor":"end", "font-size":11, fill:css("--ink2")}); });
+    yrs.forEach((yr, i) => { const g = svgEl("rect", {x:x(i)-25, y:top, width:50, height:H-top-bottom, fill:"transparent"}, svg); hover(g, `<b>${yr}</b><br>p90 ${gbpk(f["90"][i])}<br>p75 ${gbpk(f["75"][i])}<br><b>median ${gbpk(f["50"][i])}</b><br>p25 ${gbpk(f["25"][i])}<br>p10 ${gbpk(f["10"][i])}`); });
+    const c = R[r].conditional;
+    document.getElementById("fanStats").textContent = `P(£750k) ${pc(R[r].p_target_by_2034)} · P(£500k) ${pc(R[r].p_500k_by_2034)} · median 2034 ${gbpk(R[r].nw_percentiles_2034["50"])}` + (c.median_acquisition_year ? ` · median deal year ${c.median_acquisition_year}` : "");
+  }
+  sel.addEventListener("change", draw); draw();
+})();
+
+// ---------- deal anatomy + draw by year held ----------
+(function(){
+  const r = R.hybrid_2blocks_2y, c = r.conditional;
+  const P = DATA.params;
+  const rows = [["Median enterprise value closed", gbpk(c.median_ev_closed), `p10–p90 ${gbpk(c.ev_closed_p10_p90[0])} – ${gbpk(c.ev_closed_p10_p90[1])}`],
+    ["EBITDA at purchase (before year-1 shock)", gbpk(c.median_ebitda_at_close), `entry multiple ${P.multiple_median}× (listing evidence)`],
+    ["Cash Dale puts in (deposit, costs, working capital)", gbpk(c.median_cash_in_deal), "all from above the £120k floor"],
+    ["Vendor note", `${Math.round(P.seller_finance_share*100)}% of EV`, `${P.vendor_loan_term_years} years at ${Math.round(P.vendor_loan_rate*100)}%`],
+    ["Bank / GGS debt", "the rest, capped", `PG ≤ risk pot ÷ ${P.pg_share_of_facility} PG share; ≤ ${P.senior_debt_max_ebitda_multiple}× EBITDA; DSCR ≥ ${P.dscr_min}`],
+    ["Manager cover charged", gbpk(P.manager_cost) + "/yr", "incremental ops cover, not a full £55k hire"],
+    ["Deal closes", pc(r.p_business_acquired) + " of paths", `median ${c.median_acquisition_year}; search opens after 2 years of 2 blocks`],
+    ["P(£750k) given a deal", pc(c.p_target_given_acquired), `P(£500k) given a deal ${pc(c.p_500k_given_acquired)}`]];
+  document.getElementById("dealAnatomy").innerHTML = "<table>" + rows.map(x => `<tr><td>${x[0]}</td><td class="n"><b>${x[1]}</b></td><td class="small">${x[2]}</td></tr>`).join("") + "</table>";
+  const d = c.median_draw_by_year_held.filter(v => v !== null).slice(0, 6);
+  const W = 480, H = 230, left = 60, bottom = 34, top = 16;
+  const box = document.getElementById("drawChart"); const svg = svgEl("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", "aria-label":"Owner draw by year held"}, box);
+  const maxV = Math.max(40000, ...d.map(Math.abs)) * 1.15, minV = Math.min(0, ...d) * 1.15;
+  const y = v => top + (maxV - v) / (maxV - minV) * (H - top - bottom), bw = (W - left - 20) / d.length;
+  [ -10000, 0, 10000, 20000, 30000, 40000, 50000].filter(g => g >= minV && g <= maxV).forEach(g => { svgEl("line", {x1:left, x2:W-10, y1:y(g), y2:y(g), stroke:g===0?css("--axis"):css("--grid")}, svg); text(svg, left-6, y(g)+4, gbpk(g), {"text-anchor":"end", "font-size":10.5, fill:css("--muted")}); });
+  d.forEach((v, i) => { const x0 = left + i*bw + 8; const rect = svgEl("rect", {x:x0, y:Math.min(y(v), y(0)), width:bw-16, height:Math.abs(y(v)-y(0)), fill:v >= 0 ? css("--s1") : css("--s2"), rx:3}, svg); text(svg, x0 + (bw-16)/2, H-12, "yr " + (i+1), {"text-anchor":"middle", "font-size":11, fill:css("--muted")}); hover(rect, `<b>Year ${i+1} held</b><br>median owner draw ${gbp(v)}`); });
+  svgEl("line", {x1:left, x2:W-10, y1:y(20000), y2:y(20000), stroke:css("--floor"), "stroke-dasharray":"4 3"}, svg); text(svg, W-12, y(20000)-4, "£20k burn", {"text-anchor":"end", "font-size":10.5});
+})();
+
+// ---------- labour sweep heatmap ----------
+(function(){
+  const s = DATA.sweep_labour; const yrsL = [0,1,2,3], bl = [1,2,3];
+  const W = 1000, cw = 170, ch = 70, left = 190, top = 40;
+  const box = document.getElementById("sweepChart"); const svg = svgEl("svg", {viewBox:`0 0 ${W} ${top + yrsL.length*ch + 20}`, role:"img", "aria-label":"Labour sweep heatmap"}, box);
+  const ramp = ["#cde2fb","#9ec5f4","#6da7ec","#3987e5","#256abf","#184f95"];
+  const maxP = Math.max(...s.map(x => x.p750));
+  bl.forEach((b, j) => text(svg, left + j*cw + cw/2, top - 14, `${b} block${b>1?"s":""} / year`, {"text-anchor":"middle", "font-size":12.5, fill:css("--ink")}));
+  yrsL.forEach((yr, i) => {
+    text(svg, left - 12, top + i*ch + ch/2 + 4, yr === 0 ? "search from 2027 (SOT)" : `${yr} year${yr>1?"s":""} contracting first`, {"text-anchor":"end", "font-size":12.5, fill:css("--ink")});
+    bl.forEach((b, j) => {
+      const cell = s.find(x => x.years === yr && x.blocks_per_year === b); if (!cell) return;
+      const col = ramp[Math.min(5, Math.floor(cell.p750 / maxP * 5.999))];
+      const g = svgEl("g", {}, svg);
+      svgEl("rect", {x:left + j*cw + 2, y:top + i*ch + 2, width:cw-4, height:ch-4, fill:col, rx:4}, g);
+      const dark = ramp.indexOf(col) >= 3;
+      text(g, left + j*cw + cw/2, top + i*ch + 30, pc(cell.p750), {"text-anchor":"middle", "font-size":17, "font-weight":600, fill: dark ? "#fff" : "#0b0b0b"});
+      text(g, left + j*cw + cw/2, top + i*ch + 50, `deal ${pc(cell.p_acq)} · ${Math.round(cell.days)} days`, {"text-anchor":"middle", "font-size":10.5, fill: dark ? "#e8eef8" : "#3a3a37"});
+      hover(g, `<b>${yr} yr × ${b} block(s)</b><br>P(£750k) ${pc(cell.p750)} · P(£500k) ${pc(cell.p500)}<br>deal closes ${pc(cell.p_acq)}, median year ${cell.acq_year||"—"}<br>employed days ≈ ${Math.round(cell.days)} · floor breached ${pc(cell.p_floor)}<br>median NW ${gbpk(cell.nw50)} · p90 ${gbpk(cell.nw90)}`);
+    });
+  });
+})();
+
+// ---------- scenarios ----------
+(function(){
+  const sc = DATA.scenarios, keys = Object.keys(sc);
+  const W = 1000, rowH = 44, left = 420, H = keys.length*rowH + 40;
+  const box = document.getElementById("scenarioChart"); const svg = svgEl("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", "aria-label":"Cumulative scenarios"}, box);
+  const maxP = 0.7, x = p => left + p/maxP * (W - left - 40);
+  for (let g = 0; g <= maxP+1e-9; g += 0.1){ svgEl("line", {x1:x(g), x2:x(g), y1:14, y2:H-24, stroke:css("--grid")}, svg); text(svg, x(g), H-8, pc(g), {"text-anchor":"middle", "font-size":11, fill:css("--muted")}); }
+  keys.forEach((k, i) => {
+    const s = sc[k], y = 20 + i*rowH;
+    text(svg, left-10, y+18, (i>0 && i<keys.length-1 ? "" : "") + k, {"text-anchor":"end", "font-size":12.5, fill:css("--ink")});
+    const g = svgEl("g", {}, svg);
+    svgEl("rect", {x:x(0), y:y+2, width:Math.max(2, x(s.p500)-x(0)), height:12, fill:css("--s3"), rx:3}, g);
+    svgEl("rect", {x:x(0), y:y+16, width:Math.max(2, x(s.p750)-x(0)), height:12, fill:css("--s1"), rx:3}, g);
+    text(svg, x(s.p500)+6, y+12, pc(s.p500), {"font-size":11}); text(svg, x(s.p750)+6, y+26, pc(s.p750), {"font-size":11});
+    svgEl("rect", {x:0, y, width:W, height:rowH, fill:"transparent"}, g);
+    hover(g, `<b>${k}</b><br>P(£750k) ${pc(s.p750)} · P(£500k) ${pc(s.p500)}<br>deal closes ${pc(s.p_acq)} · P(£750k | deal) ${pc(s.p750_given_acq)}<br>median NW ${gbpk(s.nw50)} · employed days ${Math.round(s.days)}`);
+  });
+  const lg = document.createElement("div"); lg.className = "legend"; lg.innerHTML = `<span style="--c:var(--s3)">P(£500k)</span><span style="--c:var(--s1)">P(£750k)</span>`; box.appendChild(lg);
+})();
+
+// ---------- tornado ----------
+(function(){
+  const t = DATA.tornado; const base = R.hybrid_2blocks_2y.p_target_by_2034;
+  const NAME = {"general.start_investable":"Start cash (£150k → £200k)","routes.hybrid_2blocks_2y.seller_finance_share":"Vendor note share (20% → 50%)","routes.hybrid_2blocks_2y.multiple_median":"Entry multiple (2.0× → 3.6×)","routes.hybrid_2blocks_2y.manager_cost":"Manager cover (£0 → £45k)","routes.hybrid_2blocks_2y.p_close_within_12m":"P(close per search year) (15% → 50%)","general.index_nominal_return_mean":"Index return (3% → 7%)","routes.hybrid_2blocks_2y.ebitda_growth_median":"EBITDA growth (−2% → +8%)","routes.hybrid_2blocks_2y.exit_multiple_median":"Exit multiple (2.2× → 3.8×)","routes.hybrid_2blocks_2y.bank_term_years":"Bank term (5 → 10 yrs)","general.pg_share_of_facility":"PG share of facility (20% → 100%)","routes.hybrid_2blocks_2y.max_search_years":"Years of search (1 → 3)","routes.hybrid_2blocks_2y.p_severe_decline_yr1":"P(severe yr-1 decline) (6% → 25%)","routes.hybrid_2blocks_2y.p_failure_annual_after_yr1":"Annual failure hazard (2% → 10%)","general.annual_burn":"Burn (£16.8k → £24k)","general.dscr_min":"Lender DSCR (1.2 → 1.5)","routes.hybrid_2blocks_2y.fit_multiplier":"Fit multiplier (0.8 → 1.3)","general.backstop_p_block_lands":"P(a block lands) (55% → 90%)","routes.hybrid_2blocks_2y.ev_median":"Deal size sought (£220k → £400k)"};
+  const keys = Object.keys(t).sort((a,b) => Math.abs(t[b].p750_high - t[b].p750_low) - Math.abs(t[a].p750_high - t[a].p750_low));
+  const W = 1000, rowH = 26, left = 330, H = keys.length*rowH + 44;
+  const box = document.getElementById("tornadoChart"); const svg = svgEl("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", "aria-label":"Tornado sensitivity"}, box);
+  const maxP = 0.14, x = p => left + p/maxP * (W - left - 40);
+  for (let g = 0; g <= maxP+1e-9; g += 0.02){ svgEl("line", {x1:x(g), x2:x(g), y1:14, y2:H-24, stroke:css("--grid")}, svg); text(svg, x(g), H-8, pc(g), {"text-anchor":"middle", "font-size":11, fill:css("--muted")}); }
+  svgEl("line", {x1:x(base), x2:x(base), y1:10, y2:H-24, stroke:css("--ink2"), "stroke-width":1.5}, svg); text(svg, x(base), 9, "base " + pc(base), {"text-anchor":"middle", "font-size":10.5});
+  keys.forEach((k, i) => {
+    const s = t[k], y = 20 + i*rowH, lo = Math.min(s.p750_low, s.p750_high), hi = Math.max(s.p750_low, s.p750_high);
+    text(svg, left-10, y+15, NAME[k] || k, {"text-anchor":"end", "font-size":12, fill:css("--ink")});
+    const g = svgEl("g", {}, svg);
+    svgEl("rect", {x:x(Math.min(lo, base)), y:y+5, width:Math.max(2, x(base)-x(Math.min(lo,base))), height:14, fill:css("--s2"), rx:2}, g);
+    svgEl("rect", {x:x(base), y:y+5, width:Math.max(2, x(Math.max(hi,base))-x(base)), height:14, fill:css("--s1"), rx:2}, g);
+    svgEl("rect", {x:0, y, width:W, height:rowH, fill:"transparent"}, g);
+    hover(g, `<b>${NAME[k]||k}</b><br>at low value ${s.low}: P(£750k) ${pc(s.p750_low)} · P(£500k) ${pc(s.p500_low)}<br>at high value ${s.high}: P(£750k) ${pc(s.p750_high)} · P(£500k) ${pc(s.p500_high)}<br>base value ${s.base_value}`);
+  });
+  const lg = document.createElement("div"); lg.className = "legend"; lg.innerHTML = `<span style="--c:var(--s2)">below base</span><span style="--c:var(--s1)">above base</span>`; box.appendChild(lg);
+})();
+
+// ---------- horizon ----------
+(function(){
+  const h = DATA.horizon, keys = Object.keys(h);
+  const W = 1000, rowH = 34, left = 330, H = keys.length*rowH + 44;
+  const box = document.getElementById("horizonChart"); const svg = svgEl("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", "aria-label":"Horizon comparison"}, box);
+  const maxP = 0.35, x = p => left + Math.min(p,maxP)/maxP * (W - left - 40);
+  for (let g = 0; g <= maxP+1e-9; g += 0.05){ svgEl("line", {x1:x(g), x2:x(g), y1:14, y2:H-24, stroke:css("--grid")}, svg); text(svg, x(g), H-8, pc(g), {"text-anchor":"middle", "font-size":11, fill:css("--muted")}); }
+  const cols = {"2034":css("--s1"), "2036":css("--s7"), "2038":css("--s4")};
+  keys.forEach((k, i) => {
+    const y = 20 + i*rowH; text(svg, left-10, y+18, LABEL[k], {"text-anchor":"end", "font-size":12, fill:css("--ink")});
+    const g = svgEl("g", {}, svg);
+    ["2034","2036","2038"].forEach((yr, j) => svgEl("rect", {x:x(0), y:y+3+j*8, width:Math.max(2, x(h[k][yr].p750)-x(0)), height:6, fill:cols[yr], rx:2}, g));
+    svgEl("rect", {x:0, y, width:W, height:rowH, fill:"transparent"}, g);
+    hover(g, `<b>${LABEL[k]}</b><br>P(£750k) by 2034 ${pc(h[k]["2034"].p750)} · 2036 ${pc(h[k]["2036"].p750)} · 2038 ${pc(h[k]["2038"].p750)}<br>P(£500k) ${pc(h[k]["2034"].p500)} / ${pc(h[k]["2036"].p500)} / ${pc(h[k]["2038"].p500)}`);
+  });
+  const lg = document.createElement("div"); lg.className = "legend"; lg.innerHTML = `<span style="--c:var(--s1)">by 2034 (40)</span><span style="--c:var(--s7)">by 2036 (42)</span><span style="--c:var(--s4)">by 2038 (44)</span>`; box.appendChild(lg);
+})();
+
+// ---------- fit table ----------
+(function(){
+  const F = DATA.fit;
+  const chip = (v, good, warn) => `<span class="chip ${v===good?"good":v===warn?"warn":"bad"}">${v}</span>`;
+  document.getElementById("fitTable").innerHTML = `<table><thead><tr><th>Route</th><th>Seat</th><th>Implementation load</th><th>Demand exists?</th><th class="n">Hrs/wk yr1 → yr3</th><th>Single-point risk</th><th class="n">Fit ×</th><th>Evidence in one line</th></tr></thead><tbody>` +
+    F.map(f => `<tr><td>${LABEL[f.route]}</td><td>${chip(f.seat,"selling","mixed")}</td><td>${chip(f.impl,"low","medium")}</td><td>${chip(f.demand,"yes","partly")}</td><td class="n">${f.hours}</td><td>${f.risk}</td><td class="n"><b>${f.fit.toFixed(2)}</b></td><td class="small">${f.why}</td></tr>`).join("") + "</tbody></table>";
+})();
+
+// ---------- market table ----------
+(function(){
+  const M = DATA.market;
+  document.getElementById("marketTable").innerHTML = `<table><thead><tr><th>Category</th><th class="n">Priced listings £150–600k</th><th class="n">Median asking</th><th class="n">Median stated profit</th><th class="n">Median multiple</th><th class="n">Retiring</th><th class="n">Vendor finance</th><th class="n">SE / London</th><th class="n">Manager stated</th><th>Survival / notes</th></tr></thead><tbody>` +
+    M.map(m => `<tr><td>${m.cat}</td><td class="n">${m.n}</td><td class="n">${m.ask}</td><td class="n">${m.profit}</td><td class="n">${m.mult}</td><td class="n">${m.ret}</td><td class="n">${m.vf}</td><td class="n">${m.se}</td><td class="n">${m.mgr}</td><td class="small">${m.note}</td></tr>`).join("") + "</tbody></table>";
+})();
+
+// ---------- decisions + method ----------
+document.getElementById("decisions").innerHTML = DATA.decisions.map(d => `<li><b>${d.t}</b> ${d.b}</li>`).join("");
+document.getElementById("method").innerHTML = DATA.method;
+</script>
