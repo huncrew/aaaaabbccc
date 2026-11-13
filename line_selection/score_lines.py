@@ -27,6 +27,8 @@ for r in rows:
     kills=[k for k,c in [("Amazon is a seller", r.get("amz_amazon_is_seller","").lower().startswith("y")),("margin under 25%", margin is not None and margin<0.25),("top seller over 60%", ts is not None and ts>60)] if c]
     monthly_gp=None if margin is None else margin*avg([None if eu is None else eu/3*ep/1.2*0.05, None if au is None else au/3*ap/1.2*0.03])  # a 5% eBay / 3% Amazon unit share
     out.append({"line":r["line"],"score":None if score is None else round(score,1),"data_coverage_pct":have,"best_margin":None if margin is None else round(margin,3),"ebay_sold_90d":eu,"amz_units_90d":au,"gp_month_at_small_share_gbp":None if monthly_gp is None else round(monthly_gp),"kill":"; ".join(kills)})
-out.sort(key=lambda o:(bool(o["kill"]), -(o["score"] or -1)))
+for o in out:
+    if o["data_coverage_pct"]<50 and not o["kill"]: o["kill"]="NEEDS DATA (under 50% of fields filled)"; 
+out.sort(key=lambda o:(o["kill"].startswith("NEEDS"), bool(o["kill"]), -(o["score"] or -1)))
 with open("ranked.csv","w",newline="") as fo: w=csv.DictWriter(fo,fieldnames=out[0].keys()); w.writeheader(); w.writerows(out)
 for o in out: print(f"{o['line'][:44]:44s} score={o['score']} cover={o['data_coverage_pct']}% margin={o['best_margin']} eBay90d={o['ebay_sold_90d']} amz90d={o['amz_units_90d']} GP/mo@small share=£{o['gp_month_at_small_share_gbp']} {('KILL: '+o['kill']) if o['kill'] else ''}")
