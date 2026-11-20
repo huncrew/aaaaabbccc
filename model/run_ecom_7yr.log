@@ -1,0 +1,112 @@
+
+A. Dale, data-led, 2 line attempts/yr, lines survive 75%/yr, B2B 20%/yr, scale after £60k
+  year        2027  2028  2029  2030  2031  2032  2033  2034
+  profit p25     4    22    38    49    54    56    56    57   (£k/yr)
+  profit p50    13    41    65    80    86    87    89    89
+  profit p75    26    69   104   122   128   130   131   131
+  P(>= £30k in ANY year)=100%   P(>= £30k in 2034)= 93%   P(>= £30k for 3+ yrs)= 99%
+  P(>= £60k in ANY year)= 98%   P(>= £60k in 2034)= 73%   P(>= £60k for 3+ yrs)= 86%
+  P(>= £100k in ANY year)= 81%   P(>= £100k in 2034)= 42%   P(>= £100k for 3+ yrs)= 46%
+  P(>= £150k in ANY year)= 46%   P(>= £150k in 2034)= 18%   P(>= £150k for 3+ yrs)= 15%
+  Net worth 2034 (incl. 2 blocks/yr contracting, 10% sleeve, brand value): P(>=750k)= 83%  P(>=500k)= 98%  median=1035k
+
+B. Same but lines fade faster (survival 60%/yr) - your pet-art experience
+  year        2027  2028  2029  2030  2031  2032  2033  2034
+  profit p25     4    22    35    41    43    43    43    44   (£k/yr)
+  profit p50    13    42    61    69    71    72    71    72
+  profit p75    26    70    99   109   111   111   110   111
+  P(>= £30k in ANY year)=100%   P(>= £30k in 2034)= 87%   P(>= £30k for 3+ yrs)= 98%
+  P(>= £60k in ANY year)= 96%   P(>= £60k in 2034)= 60%   P(>= £60k for 3+ yrs)= 78%
+  P(>= £100k in ANY year)= 75%   P(>= £100k in 2034)= 31%   P(>= £100k for 3+ yrs)= 33%
+  P(>= £150k in ANY year)= 38%   P(>= £150k in 2034)= 11%   P(>= £150k for 3+ yrs)=  9%
+  Net worth 2034 (incl. 2 blocks/yr contracting, 10% sleeve, brand value): P(>=750k)= 76%  P(>=500k)= 97%  median= 955k
+
+C. Same as A but evergreen, non-seasonal lines (survival 85%/yr, decay 5%)
+  year        2027  2028  2029  2030  2031  2032  2033  2034
+  profit p25     4    22    41    56    67    72    75    77   (£k/yr)
+  profit p50    13    41    68    89   101   107   112   115
+  profit p75    26    69   108   133   147   154   160   164
+  P(>= £30k in ANY year)=100%   P(>= £30k in 2034)= 97%   P(>= £30k for 3+ yrs)= 99%
+  P(>= £60k in ANY year)= 99%   P(>= £60k in 2034)= 85%   P(>= £60k for 3+ yrs)= 92%
+  P(>= £100k in ANY year)= 88%   P(>= £100k in 2034)= 60%   P(>= £100k for 3+ yrs)= 60%
+  P(>= £150k in ANY year)= 57%   P(>= £150k in 2034)= 31%   P(>= £150k for 3+ yrs)= 25%
+  Net worth 2034 (incl. 2 blocks/yr contracting, 10% sleeve, brand value): P(>=750k)= 89%  P(>=500k)= 99%  median=1133k
+
+D. Same as A, B2B/direct works (40%/yr, £25k median accounts)
+  year        2027  2028  2029  2030  2031  2032  2033  2034
+  profit p25     7    32    55    70    78    82    85    87   (£k/yr)
+  profit p50    19    58    90   109   117   123   126   128
+  profit p75    39    94   138   158   169   176   179   181
+  P(>= £30k in ANY year)=100%   P(>= £30k in 2034)= 98%   P(>= £30k for 3+ yrs)=100%
+  P(>= £60k in ANY year)=100%   P(>= £60k in 2034)= 90%   P(>= £60k for 3+ yrs)= 96%
+  P(>= £100k in ANY year)= 93%   P(>= £100k in 2034)= 67%   P(>= £100k for 3+ yrs)= 73%
+  P(>= £150k in ANY year)= 70%   P(>= £150k in 2034)= 38%   P(>= £150k for 3+ yrs)= 37%
+  Net worth 2034 (incl. 2 blocks/yr contracting, 10% sleeve, brand value): P(>=750k)= 94%  P(>=500k)=100%  median=1250k
+
+E. Haphazard: p_line 0.4, no B2B, no scaling
+  year        2027  2028  2029  2030  2031  2032  2033  2034
+  profit p25     0    10    18    25    28    31    32    32   (£k/yr)
+  profit p50     6    24    39    48    52    55    56    57
+  profit p75    16    46    68    79    85    88    88    90
+  P(>= £30k in ANY year)= 98%   P(>= £30k in 2034)= 77%   P(>= £30k for 3+ yrs)= 89%
+  P(>= £60k in ANY year)= 85%   P(>= £60k in 2034)= 47%   P(>= £60k for 3+ yrs)= 53%
+  P(>= £100k in ANY year)= 48%   P(>= £100k in 2034)= 20%   P(>= £100k for 3+ yrs)= 17%
+  P(>= £150k in ANY year)= 18%   P(>= £150k in 2034)=  6%   P(>= £150k for 3+ yrs)=  4%
+  Net worth 2034 (incl. 2 blocks/yr contracting, 10% sleeve, brand value): P(>=750k)= 60%  P(>=500k)= 91%  median= 822k
+
+F. A with 25% crypto sleeve
+  year        2027  2028  2029  2030  2031  2032  2033  2034
+  profit p25     4    22    38    49    54    56    57    57   (£k/yr)
+  profit p50    13    42    65    80    86    88    89    89
+  profit p75    26    70   104   122   129   131   132   132
+  P(>= £30k in ANY year)=100%   P(>= £30k in 2034)= 93%   P(>= £30k for 3+ yrs)= 99%
+  P(>= £60k in ANY year)= 98%   P(>= £60k in 2034)= 73%   P(>= £60k for 3+ yrs)= 86%
+  P(>= £100k in ANY year)= 81%   P(>= £100k in 2034)= 42%   P(>= £100k for 3+ yrs)= 46%
+  P(>= £150k in ANY year)= 46%   P(>= £150k in 2034)= 18%   P(>= £150k for 3+ yrs)= 16%
+  Net worth 2034 (incl. 2 blocks/yr contracting, 10% sleeve, brand value): P(>=750k)= 80%  P(>=500k)= 97%  median=1072k
+
+=== Calibration: most lines are small, hits are rare (fat tail) ===
+
+G. Conservative: per-line median £8k, p90 £45k (hits rare), survival 70%, B2B 15%
+  year        2027  2028  2029  2030  2031  2032  2033  2034
+  profit p25     1     9    17    22    26    28    29    30   (£k/yr)
+  profit p50     5    21    35    43    48    51    52    53
+  profit p75    16    44    66    79    85    89    90    91
+  P(>= £30k in ANY year)= 96%   P(>= £30k in 2034)= 75%   P(>= £30k for 3+ yrs)= 85%
+  P(>= £60k in ANY year)= 78%   P(>= £60k in 2034)= 44%   P(>= £60k for 3+ yrs)= 50%
+  P(>= £100k in ANY year)= 50%   P(>= £100k in 2034)= 21%   P(>= £100k for 3+ yrs)= 21%
+  P(>= £150k in ANY year)= 26%   P(>= £150k in 2034)=  9%   P(>= £150k for 3+ yrs)=  8%
+  Net worth 2034 (incl. 2 blocks/yr contracting, 10% sleeve, brand value): P(>=750k)= 61%  P(>=500k)= 90%  median= 830k
+
+I. G but only 1 line attempt/yr (3 days/wk, health)
+  year        2027  2028  2029  2030  2031  2032  2033  2034
+  profit p25     0     2     6     9    11    13    14    16   (£k/yr)
+  profit p50     1    10    17    22    26    29    31    32
+  profit p75     9    26    38    46    52    57    59    61
+  P(>= £30k in ANY year)= 79%   P(>= £30k in 2034)= 53%   P(>= £30k for 3+ yrs)= 55%
+  P(>= £60k in ANY year)= 47%   P(>= £60k in 2034)= 26%   P(>= £60k for 3+ yrs)= 25%
+  P(>= £100k in ANY year)= 26%   P(>= £100k in 2034)= 12%   P(>= £100k for 3+ yrs)= 10%
+  P(>= £150k in ANY year)= 13%   P(>= £150k in 2034)=  5%   P(>= £150k for 3+ yrs)=  4%
+  Net worth 2034 (incl. 2 blocks/yr contracting, 10% sleeve, brand value): P(>=750k)= 40%  P(>=500k)= 77%  median= 675k
+
+J. G with evergreen lines (survival 85%)
+  year        2027  2028  2029  2030  2031  2032  2033  2034
+  profit p25     1     9    18    27    33    38    41    43   (£k/yr)
+  profit p50     5    21    37    50    59    66    70    72
+  profit p75    16    44    70    90   101   110   114   116
+  P(>= £30k in ANY year)= 98%   P(>= £30k in 2034)= 87%   P(>= £30k for 3+ yrs)= 90%
+  P(>= £60k in ANY year)= 84%   P(>= £60k in 2034)= 60%   P(>= £60k for 3+ yrs)= 61%
+  P(>= £100k in ANY year)= 56%   P(>= £100k in 2034)= 32%   P(>= £100k for 3+ yrs)= 29%
+  P(>= £150k in ANY year)= 30%   P(>= £150k in 2034)= 15%   P(>= £150k for 3+ yrs)= 13%
+  Net worth 2034 (incl. 2 blocks/yr contracting, 10% sleeve, brand value): P(>=750k)= 69%  P(>=500k)= 94%  median= 901k
+
+K. Match to Dale's actual record: median £12k, p90 £50k, survival 65% (pet art faded in ~3 yrs)
+  year        2027  2028  2029  2030  2031  2032  2033  2034
+  profit p25     2    13    22    28    31    32    33    33   (£k/yr)
+  profit p50     8    27    42    51    55    56    57    58
+  profit p75    19    52    74    87    92    93    93    93
+  P(>= £30k in ANY year)= 99%   P(>= £30k in 2034)= 79%   P(>= £30k for 3+ yrs)= 91%
+  P(>= £60k in ANY year)= 86%   P(>= £60k in 2034)= 48%   P(>= £60k for 3+ yrs)= 57%
+  P(>= £100k in ANY year)= 56%   P(>= £100k in 2034)= 22%   P(>= £100k for 3+ yrs)= 22%
+  P(>= £150k in ANY year)= 27%   P(>= £150k in 2034)=  9%   P(>= £150k for 3+ yrs)=  7%
+  Net worth 2034 (incl. 2 blocks/yr contracting, 10% sleeve, brand value): P(>=750k)= 64%  P(>=500k)= 93%  median= 857k
